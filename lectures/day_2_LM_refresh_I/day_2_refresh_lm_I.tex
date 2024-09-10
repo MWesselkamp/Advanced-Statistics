@@ -532,7 +532,8 @@
     }
     \vspace{0.5cm}
     
-    2) Matrix-multiply X by the parameter vector \hat\beta to get the predictions
+    2) Matrix-multiply X by the parameter vector $\hat\beta$ to get the predictions
+    
     \scalebox{0.65}{
       \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_6_2.txt}
     }
@@ -544,14 +545,39 @@
     \begin{equation*}
         \mathbf{V} = cov(\mathbf{\hat{\beta}})=\sigma^2 (\mathbf{X}' \mathbf{X})^{-1}
     \end{equation*}
+    In R:
+    \vspace{0.5cm}
+
+    3) Compute first the variance-covariance matrix \textbf{V} and then the prediction variances \textbf{XVX'} with the new design matrix
+
+    \scalebox{0.65}{
+      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_7_1.txt}
+    }
+    \vspace{0.5cm}
+    
+    4) Extract the diagonal of this matrix and take the square root. If computing prediction rather than confidence intervals, add the residual variance $\sigma^2$.
+
+    \scalebox{0.7}{
+      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_7_2.txt}
+    }
+
+    
 \end{frame}
 
 \begin{frame}
     \frametitle{}
-    Compute the 95\% confidence intervals based on a Normal approximation:
-    \begin{equation*}
-        SE \cdot 1.96
-    \end{equation*}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        5) Compute the 95\% confidence intervals based on a Normal approximation: $SE \cdot 1.96$    
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            
+        \end{column}
+    \end{columns}
+
+
+    
+    
 \end{frame}
 
 \begin{frame}

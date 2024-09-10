@@ -1,0 +1,2 @@
+var.confint <- sqrt(diag(XVX))
+var.predict <- sqrt(diag(XVX) + res.variance)
