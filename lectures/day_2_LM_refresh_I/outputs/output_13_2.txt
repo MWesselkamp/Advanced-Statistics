@@ -1,0 +1,3 @@
+mod <- 
+lm(response ~ treat + group, 
+data = example_2)
