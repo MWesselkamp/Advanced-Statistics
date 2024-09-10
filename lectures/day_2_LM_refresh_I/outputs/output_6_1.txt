@@ -1,0 +1,2 @@
+new.design.matrix <- 
+as.matrix(data.frame(Intercept = rep(1,100), x = seq(0, 5, length = 100)))

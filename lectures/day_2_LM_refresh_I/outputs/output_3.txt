@@ -1,0 +1,11 @@
+vcov(lm(y ~ x)) 
+# diagonals = variances, off-diagonals = co-variances
+
+            (Intercept)          x
+(Intercept)   2.4675458 -0.9213982
+x            -0.9213982  0.3922764
+
+sqrt(diag(vcov(lm(y~ x))))
+
+(Intercept)           x 
+  1.5708424   0.6263197 

@@ -1,0 +1,13 @@
+$group
+  (Intercept)
+1  -0.2031451
+2   0.2031451
+3  -1.1613079
+4   1.1613079
+
+with conditional variances for "group" 
+
+
+
+treatmentA treatmentB 
+  9.836181   5.507260 

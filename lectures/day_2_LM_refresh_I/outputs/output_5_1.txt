@@ -1,0 +1,4 @@
+optimised$par
+
+   beta_0    beta_1 
+-1.715189  3.485194 

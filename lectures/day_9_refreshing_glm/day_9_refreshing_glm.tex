@@ -1,0 +1,255 @@
+\documentclass{beamer}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+
+% R code formatting
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{Rstyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\title{Mixed Effects Models - Day 9}
+\subtitle{Refreshing Generalized Linear Models}
+\author{Marieke Wesselkamp\\Department of Biometry and Environmental Systems Analysis\\Albert-Ludwigs-University of Freiburg (Germany)}
+\date{February 2023}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\section{Normal Distribution}
+
+\begin{frame}
+    \frametitle{Normal Distribution}
+    Data that can take any value between $-\infty$ and $\infty$, are continuous, and have a variance $\sigma^2$ that is independent of the mean $\mu$.
+    
+    \[
+    N(y) = P(Y = y; \mu, \sigma^2) = \frac{1}{\sigma \sqrt{2 \pi}} e^{\frac{-(y - \mu)^2}{2 \sigma^2}}
+    \]
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{normal_distribution.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Normal Distribution Example in R}
+    \lstset{style=Rstyle}
+    \begin{lstlisting}
+par(las = 1, pty = "s", tcl = 0.5, mgp = c(3.0,0.5,0))
+curve(dnorm(x, 4, 2), from = -15, to = 15, lwd = 3, xlim = c(-10, 15), 
+    ylab = "probability", xlab = "a value for y")
+curve(dnorm(x, 2, 4), from = -15, to = 15, lwd = 3, col = "darkgray", 
+    add = TRUE)
+curve(dnorm(x, 8, 3), from = -15, to = 15, lwd = 3, col = "lightgray", 
+    add = TRUE)
+    \end{lstlisting}
+\end{frame}
+
+\section{T- and F- Distributions}
+
+\begin{frame}
+    \frametitle{T-distribution Example}
+    The t-distribution is a continuous probability distribution often used for estimating population parameters when the sample size is small or the population variance is unknown.
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{t_distribution.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{F-distribution Example}
+    The F-distribution is used in analysis of variance (ANOVA), comparing variances and model testing.
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{f_distribution.png}
+    \end{figure}
+\end{frame}
+
+\section{Binomial and Bernoulli Distributions}
+
+\begin{frame}
+    \frametitle{Binomial Distribution}
+    Discrete distribution for $k$ successes in a series of $n$ trials:
+    
+    \[
+    Binom(y) = P(Y = k; n, p) = \binom{n}{k} p^k(1 - p)^{n-k}
+    \]
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{binomial_distribution.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Bernoulli Distribution}
+    A special case of the binomial distribution where $n = 1$. The outcome can only be 0 or 1.
+    
+    \[
+    Bern(y) = P(Y = k; p) = p^k(1-p)^{1-k}, \quad k \in \{0,1\}
+    \]
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{bernoulli_distribution.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Difference between Bernoulli and Binomial}
+    \begin{itemize}
+        \item Bernoulli: Only one trial (Yes/No outcome).
+        \item Binomial: Multiple trials, each resulting in success or failure.
+    \end{itemize}
+\end{frame}
+
+\section{Poisson Distribution}
+
+\begin{frame}
+    \frametitle{Poisson Distribution}
+    A discrete distribution for counting the number of events that occur in a fixed interval of time or space.
+    
+    \[
+    Pois(y) = P(Y = k; \lambda) = \frac{\lambda^k e^{-\lambda}}{k!}
+    \]
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{poisson_distribution.png}
+    \end{figure}
+\end{frame}
+
+\section{GLM Structure}
+
+\begin{frame}
+    \frametitle{Generalized Linear Model (GLM)}
+    A GLM is specified by three components:
+    \begin{enumerate}
+        \item An assumption about the distribution of the response variable.
+        \item Specification of the linear predictor.
+        \item Specification of the link function.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Link Function}
+    The link function connects the linear predictor to the distribution parameters, ensuring that the predicted values follow the assumed distribution.
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{link_functions.png}
+    \end{figure}
+\end{frame}
+
+\section{Binomial GLM Example}
+
+\begin{frame}
+    \frametitle{Binomial GLM Example in R}
+    \lstset{style=Rstyle}
+    \begin{lstlisting}
+m.binomial <- glm(cbind(lebend, total - lebend) ~ S, 
+                family = binomial(link = "logit"), 
+                data = daphnia)
+summary(m.binomial)
+    \end{lstlisting}
+    
+    The logit link function:
+    \[
+    logit(\hat{y}) = \log\left(\frac{p}{1 - p}\right) = \beta_0 + \beta_1 \cdot x
+    \]
+\end{frame}
+
+\begin{frame}
+    \frametitle{Inverse Link Function}
+    The inverse logit function is used to transform predictions back to the original scale:
+    \[
+    logit^{-1}(\hat{y}) = \frac{e^{\hat{\beta_0} + \hat{\beta_1} \cdot x}}{1 + e^{\hat{\beta_0} + \hat{\beta_1} \cdot x}}
+    \]
+\end{frame}
+
+\section{Poisson GLM Example}
+
+\begin{frame}
+    \frametitle{Poisson GLM Example in R}
+    \lstset{style=Rstyle}
+    \begin{lstlisting}
+m.poisson <- glm(Dead ~ Distance, 
+                family = poisson(link = "log"),  
+                data = roadkill)
+summary(m.poisson)
+    \end{lstlisting}
+    
+    The log link function:
+    \[
+    \log(\hat{y}) = \ln(\lambda) = \beta_0 + \beta_1 \cdot x
+    \]
+\end{frame}
+
+\section{Diagnostics for GLMs}
+
+\begin{frame}
+    \frametitle{Diagnostics for GLMs}
+    \begin{itemize}
+        \item The "fab four" (residual plots, etc.) don't apply directly.
+        \item Check for dispersion: compare residual deviance to degrees of freedom.
+        \item Check for zero-inflation in Poisson models.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Checking Dispersion in R}
+    \lstset{style=Rstyle}
+    \begin{lstlisting}
+summary(m.poisson)$dispersion
+m.poisson$deviance / m.poisson$df.residual
+    \end{lstlisting}
+    A value around 1 indicates correct dispersion.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Zero-Inflation Check}
+    Use simulation methods (e.g., using the DHARMa package) to assess zero-inflation in Poisson models.
+    
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.7\textwidth]{zero_inflation_check.png}
+    \end{figure}
+\end{frame}
+
+\section{Recap}
+
+\begin{frame}
+    \frametitle{Recapitulation Day 9}
+    Key concepts covered today:
+    \begin{itemize}
+        \item Poisson, Bernoulli, and Binomial distributions.
+        \item GLM structure: link functions and mean-variance relationships.
+        \item Diagnosing GLMs: overdispersion and zero-inflation.
+    \end{itemize}
+\end{frame}
+
+\end{document}

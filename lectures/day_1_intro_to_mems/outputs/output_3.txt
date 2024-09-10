@@ -1,0 +1,18 @@
+
+Call:
+lm(formula = y2 ~ x1, data = example_1)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-57.449 -24.192  -1.917  24.017  51.347 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 334.9857     8.7161  38.433  < 2e-16 ***
+x1           -4.0120     0.4021  -9.977 3.64e-12 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 29.06 on 38 degrees of freedom
+Multiple R-squared:  0.7237,    Adjusted R-squared:  0.7164 
+F-statistic: 99.54 on 1 and 38 DF,  p-value: 3.641e-12
