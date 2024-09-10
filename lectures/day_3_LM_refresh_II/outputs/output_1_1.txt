@@ -1,0 +1,15 @@
+vcov(mod)
+
+            (Intercept)          x
+(Intercept)   2.4675458 -0.9213982
+x            -0.9213982  0.3922764
+
+
+
+cov2cor(vcov(mod)) 
+# turned into correlations
+
+            (Intercept)          x
+
+(Intercept)   1.0000000 -0.9365234
+x            -0.9365234  1.0000000

@@ -1,7 +1,8 @@
 \documentclass{beamer}
 \usepackage{graphicx}
 \usepackage{amsmath}
-
+\usepackage{subfig}
+\usepackage{listings}
 
 % Set theme and colors
 \usecolortheme{default}
@@ -58,15 +59,17 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Variance-Covariance Matrix of the Errors}
+  \frametitle{}
   \textbf{The variance-covariance matrix of the \textit{errors}...}
 
   with $\epsilon_{iid} \sim \mathcal{N}(0, \sigma^2_{\epsilon} \cdot \mathbf{I})$:
+  \vspace{0.5cm}
   
   \begin{equation*}
   \scriptsize{\left( \begin{array}{ccccc} 1.52 & 0 & 0 & 0 & 0 \\ 0 & 1.52 & 0 & 0 & 0 \\ 0 & 0 & 1.52 & 0 & 0 \\ 0 & 0 & 0 & 1.52 & 0 \\ 0 & 0 & 0 & 0 & 1.52 \end{array}\right)}
   \end{equation*}
-
+ \vspace{0.5cm}
+ 
   \begin{itemize}
     \item \textbf{Note:} The variances are on the diagonals, and the covariances are on the off-diagonals.
   \end{itemize}
@@ -74,11 +77,22 @@
 
 \begin{frame}
   \frametitle{}
-  \textbf{...is not the variance-covariance matrix of the \textit{parameters}.}
-  
-  \begin{itemize}
-    \item The variance-covariance matrix of parameters is different and involves correlations among the model parameters.
-  \end{itemize}
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+        \textbf{...is not the variance-covariance matrix of the \textit{parameters}.}
+          \scalebox{0.7}{
+                \lstinputlisting[] {lectures/day_3_LM_refresh_II/outputs/output_1_1.txt}
+            }
+      \end{column}
+      \begin{column}{0.5\textwidth}
+          \scalebox{0.5}{
+                \lstinputlisting[] {lectures/day_3_LM_refresh_II/outputs/output_1_2.txt}
+            }
+      \end{column}
+  \end{columns}
+
+ %The variance-covariance matrix of parameters is different and involves correlations among the model parameters.
+
 \end{frame}
 
 \begin{frame}
