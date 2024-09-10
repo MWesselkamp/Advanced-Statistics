@@ -1,0 +1,8 @@
+newdata <- data.frame(x = seq(0, 5, length = 100))
+predictions <- predict(linear.model, newdata, se = TRUE)
+
+# The dashed lines for the confidence interval were added with this code:
+# lines(seq(0, 5, length = 100), 
+# predictions$fit + 1.96 * predictions$se.fit, lwd = 2, lty = 2)
+# lines(seq(0, 5, length = 100), 
+# predictions$fit - 1.96 * predictions$se.fit, lwd = 2, lty = 2)

@@ -568,10 +568,13 @@
     \frametitle{}
     \begin{columns}
         \begin{column}{0.5\textwidth}
-        5) Compute the 95\% confidence intervals based on a Normal approximation: $SE \cdot 1.96$    
+        5) Compute the 95\% confidence intervals based on a Normal approximation: $SE \cdot 1.96$   
+        \scalebox{0.7}{
+            \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_8.txt}
+        }
         \end{column}
         \begin{column}{0.5\textwidth}
-            
+        \includegraphics[width=\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-35-1.png}    
         \end{column}
     \end{columns}
 
@@ -585,6 +588,20 @@
     \textbf{All that is built in R for Linear Models:}
     
     Fit model with Maximum Likelihood, extract ML estimates, and more.
+
+    \scalebox{0.6}{
+        \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_9.txt}
+    }
+    
+\end{frame}
+
+\begin{frame}
+    \centering\includegraphics[width=0.6\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-35-1.png}            
+        
+    \scalebox{0.7}{
+        \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_10.txt}
+    }    
+    
 \end{frame}
 
 \begin{frame}
@@ -597,11 +614,18 @@
 \begin{frame}
     \frametitle{}
     \textbf{Before we trust the model output, we have to check whether the model assumptions are met.}
-    
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.5\textwidth]{lectures/day_3_LM_refresh_II/figures/unnamed-chunk-37-1.png} 
-    \end{figure}
+
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        \includegraphics[width=\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-40-1.png}     
+        \end{column}
+        \begin{column}{0.5\textwidth}
+        \scalebox{0.7}{
+            \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_11.txt}
+        }     
+        \end{column}
+    \end{columns}
+
 \end{frame}
 
 \begin{frame}
@@ -624,8 +648,15 @@
 
 \begin{frame}
     \frametitle{Residual-Checks}
-    \textbf{Trends? Misspecified deterministic part.}
+
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+        Trends? Misspecified deterministic part.    
+        \end{column}
+    \end{columns}
     
+    \textbf{}
+
     \textbf{Heteroscedasticity? Misspecified stochastic part (the errors) or missing information.}
     
     \begin{center}
