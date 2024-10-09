@@ -782,15 +782,17 @@ Degrees of freedom: 60 total; 56 residual
 \begin{frame}[fragile]{}
     \begin{columns}
         \begin{column}{0.5\textwidth}
-            \begin{verbatim}
+        \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 acf(residuals(model.1))
-            \end{verbatim}
+        \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-33-1.png}
         \end{column}
         \begin{column}{0.5\textwidth}
-            \begin{verbatim}
-pacf(residuals(model.1))
-            \end{verbatim}
+        \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+pacf(residuals(model.1))            
+        \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-34-1.png}
         \end{column}
     \end{columns}
@@ -798,100 +800,182 @@ pacf(residuals(model.1))
 
 \begin{frame}[fragile]{}
     \textbf{Now testing a compound symmetry correlation due to "plant":}
-    \small
-    \begin{verbatim}
-model.2 <- gls(root ~ week * fertilizer, 
-    fertilizer, correlation = corCompSymm(form = ~ week|plant))
+    \tiny
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+model.2 <- gls(root ~ week * fertilizer, fertilizer, 
+               correlation = corCompSymm(form = ~ week|plant))
 summary(model.2)
-    \end{verbatim}
-    \tiny\scalebox{0.9}{
-    \lstinputlisting[]{lectures/day_4_GLS/outputs/output_10.txt}
-  } 
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Generalized least squares fit by REML
+  Model: root ~ week * fertilizer 
+  Data: fertilizer 
+      AIC      BIC   logLik
+  117.431 129.5831 -52.7155
+Correlation Structure: Compound symmetry
+ Formula: ~week | plant 
+ Parameter estimate(s):
+      Rho 
+0.3293393 
+Coefficients:
+                            Value Std.Error  t-value p-value
+(Intercept)            -0.2223333 0.2440020 -0.91119  0.3661
+week                    0.9833333 0.0305857 32.15005  0.0000
+fertilizercontrol      -0.7576667 0.3450709 -2.19568  0.0323
+week:fertilizercontrol -0.0916667 0.0432548 -2.11923  0.0385
+ Correlation: 
+                       (Intr) week   frtlzr
+week                   -0.752              
+fertilizercontrol      -0.707  0.532       
+week:fertilizercontrol  0.532 -0.707 -0.752
+Standardized residuals:
+       Min         Q1        Med         Q3        Max 
+-2.0509519 -0.6383300 -0.2494557  0.6390501  2.5734837 
+Residual standard error: 0.5785931 
+Degrees of freedom: 60 total; 56 residual
+    \end{VerbatimOUT}
 \end{frame}
 
  \begin{frame}[fragile]{}
      \textbf{Any differences?}
-     \begin{verbatim}
+     \tiny
+     \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 anova(model.1, model.2)
-     \end{verbatim}
-     \tiny\scalebox{1.2}{
-     \lstinputlisting[]{lectures/day_4_GLS/outputs/output_11.txt}
-     } 
-     \vspace{0.5cm}
+     \end{VerbatimIN}
+     \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+        Model df      AIC      BIC   logLik   Test  L.Ratio p-value
+model.1     1  5 123.3916 133.5184 -56.6958                        
+model.2     2  6 117.4310 129.5831 -52.7155 1 vs 2 7.960612  0.0048
+     \end{VerbatimOUT}
+     \vspace{0.3cm}
      
      \normalsize\textbf{The variance-covariance matrix of the errors}
-     \begin{verbatim}
-getVarCov(model1.2)
-     \end{verbatim}
-     \tiny\scalebox{1.2}{
-     \lstinputlisting[]{lectures/day_4_GLS/outputs/output_12.txt}
-     } 
-     \vspace{0.5cm}
+     \tiny
+     \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+getVarCov(model1.2)         
+     \end{VerbatimIN}
+     \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Marginal variance covariance matrix
+        [,1]    [,2]    [,3]    [,4]    [,5]
+[1,] 0.33477 0.11025 0.11025 0.11025 0.11025
+[2,] 0.11025 0.33477 0.11025 0.11025 0.11025
+[3,] 0.11025 0.11025 0.33477 0.11025 0.11025
+[4,] 0.11025 0.11025 0.11025 0.33477 0.11025
+[5,] 0.11025 0.11025 0.11025 0.11025 0.33477
+  Standard Deviations: 0.57859 0.57859 0.57859 0.57859 0.57859 
+     \end{VerbatimOUT}
+     \vspace{0.3cm}
      
      \normalsize\textbf{Get correlation matrix:}
-     \begin{verbatim}
-cov2cor(getVarCor(model1.2))
-     \end{verbatim}
+     \tiny
+     \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+cov2cor(getVarCor(model1.2))         
+     \end{VerbatimIN}
  \end{frame}
 
 \begin{frame}[fragile]{Predictions of the 2nd model}
-    \centering\includegraphics[width=0.7\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-39-1.png}
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-39-1.png}
+    \end{center}
 \end{frame}
 
 \begin{frame}[fragile]{}
     \begin{columns}
         \begin{column}{0.5\textwidth}
-            \begin{verbatim}
+            \scriptsize
+            \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 acf(residuals(model.2))
-            \end{verbatim}
+            \end{VerbatimIN}
+
             \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-40-1.png}
         \end{column}
         \begin{column}{0.5\textwidth}
-            \begin{verbatim}
+            \scriptsize
+            \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 pacf(residuals(model.2))
-            \end{verbatim}
+            \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-41-1.png}
         \end{column}
     \end{columns}
 \end{frame}
 
 \begin{frame}[fragile]{}
-  Use the most complex \textit{general structure} matrix $\mathbf{V_i}$ and look at the correlation part of the output: so many $\rho$ values!
+  \footnotesize Use the most complex \textit{general structure} matrix $\mathbf{V_i}$ and look at the correlation part of the output: so many $\rho$ values!
   \tiny
-  \begin{verbatim}
-model.3 <- gls(root ~ week * fertilizer, 
-    fertilizer, correlation = corSymm(form = ~ 1|plant))
-  \end{verbatim}
-  \tiny\scalebox{0.9}{
-     \lstinputlisting[]{lectures/day_4_GLS/outputs/output_13.txt}
-     } 
+  \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+model.3 <- gls(root ~ week * fertilizer, fertilizer, correlation = corSymm(form=~1|plant))      
+  \end{VerbatimIN}
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Generalized least squares fit by REML
+  Model: root ~ week * fertilizer 
+  Data: fertilizer 
+       AIC     BIC    logLik
+  116.7427 147.123 -43.37134
+Correlation Structure: General
+ Formula: ~1 | plant 
+ Parameter estimate(s):
+ Correlation: 
+  1      2      3      4     
+2  0.045                     
+3 -0.231  0.326              
+4 -0.119  0.614  0.755       
+5  0.524  0.277  0.496  0.308
+Coefficients:
+                            Value  Std.Error  t-value p-value
+(Intercept)             0.0079887 0.13166126  0.06068  0.9518
+week                    0.9395140 0.01721443 54.57713  0.0000
+fertilizercontrol      -1.1307204 0.18619714 -6.07271  0.0000
+week:fertilizercontrol -0.0129736 0.02434488 -0.53291  0.5962
+ Correlation: 
+                       (Intr) week   frtlzr
+week                   -0.125              
+fertilizercontrol      -0.707  0.088       
+week:fertilizercontrol  0.088 -0.707 -0.125
+Standardized residuals:
+        Min          Q1         Med          Q3         Max 
+-2.01732475 -0.59316321 -0.09640055  0.66301178  2.87757586 
+Residual standard error: 0.5896878 
+Degrees of freedom: 60 total; 56 residual
+  \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]{}
-    \small
     \textbf{The variance-covariance matrix of the errors}
-    \begin{verbatim}
+    \scriptsize
+    \begin{VerbatimIN}
 getVarCov(model.3)
-    \end{verbatim}
-    \scalebox{0.7}{
-     \lstinputlisting[]{lectures/day_4_GLS/outputs/output_14.txt}
-     } 
-     \vspace{0.5cm}
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+Marginal variance covariance matrix
+          [,1]     [,2]      [,3]      [,4]     [,5]
+[1,]  0.347730 0.015590 -0.080207 -0.041345 0.182270
+[2,]  0.015590 0.347730  0.113410  0.213660 0.096303
+[3,] -0.080207 0.113410  0.347730  0.262410 0.172600
+[4,] -0.041345 0.213660  0.262410  0.347730 0.107020
+[5,]  0.182270 0.096303  0.172600  0.107020 0.347730
+  Standard Deviations: 0.58969 0.58969 0.58969 0.58969 0.58969 
+    \end{VerbatimOUT}
+     \vspace{0.3cm}
      
-     \textbf{The correlation matrix of the errors}
-     \begin{verbatim}
-cov2cor(getVarCov(model.3))
-     \end{verbatim}
+     \normalsize\textbf{The correlation matrix of the errors}
+     \scriptsize
+     \begin{VerbatimIN}
+cov2cor(getVarCov(model.3))    
+     \end{VerbatimIN}
 \end{frame}
 
 \begin{frame}[fragile]{}
     \textbf{Any differences here?}
-    \begin{verbatim}
-anova(model.1, model.2, model.3)
-    \end{verbatim}
-    \tiny\scalebox{1.2}{
-     \lstinputlisting[]{lectures/day_4_GLS/outputs/output_15.txt}
-     } 
+    \scriptsize
+    \begin{VerbatimIN}
+anova(model.1, model.2, model.3)        
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+        Model df      AIC      BIC    logLik   Test   L.Ratio p-value
+model.1     1  5 123.3916 133.5184 -56.69580                         
+model.2     2  6 117.4310 129.5831 -52.71550 1 vs 2  7.960612  0.0048
+model.3     3 15 116.7427 147.1230 -43.37134 2 vs 3 18.688311  0.0280
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]{Some Model Diagnostics}

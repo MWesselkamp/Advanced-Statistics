@@ -150,25 +150,28 @@ mod.2a    4 120.10 126.86 -56.051   112.10 1.8135  1     0.1781
 
 \begin{frame}{ANOVA Table}
   \resizebox{\linewidth}{!}{
-  \begin{table}[h]
-    \centering
-    \footnotesize
-    \begin{tabular}{lccccc}
-      \hline
-      Source & SS & df & MS & F & p \\
-      \hline
-      Treatment & SS\(_{\text{Treat}}\) & \(k_{\text{Treat}} - 1\) & SS\(_{\text{Treat}}\) / df\(_{\text{Treat}}\) & MS\(_{\text{Treat}}\) / MS\(_{\text{Res}}\) \\
-      Residual & SS\(_{\text{Res}}\) & N - k & SS\(_{\text{Res}}\) / df\(_{\text{Res}}\) \\
-      Total & SS\(_{\text{Total}}\) & N - 1 \\
-      \hline
-    \end{tabular}
-  \end{table}}
+    %\begin{table}[h]
+      \centering
+      \footnotesize
+      \begin{tabular}{lccccc}
+        \hline
+        \textbf{Source} & \textbf{SS} & \textbf{df} & \textbf{MS} & \textbf{F} & \textbf{p} \\
+        \hline
+        Treatment & SS$_{\text{Treat}}$ & k$_{\text{Treat}}$ - 1 & MS$_{\text{Treat}}$ = SS$_{\text{Treat}}$/df$_{\text{Treat}}$ & F = MS$_{\text{Treat}}$/MS$_{\text{Res}}$ & p$_{\text{Treat}}$ \\
+        Residual & SS$_{\text{Res}}$ & N - k$_{\text{Treat}}$ & MS$_{\text{Res}}$ = SS$_{\text{Res}}$/df$_{\text{Res}}$ &  & \\
+        Total & SS$_{\text{Total}}$ & N - 1 &  &  & \\
+        \hline
+      \end{tabular}
+    %\end{table}
+  }
 
   \vspace{0.5cm}
 
   \normalsize
-  \textbf{Think about how the F-value and the p-value change when the number \(N\) (the replication = number of INDEPENDENT data points) changes.}
+  \textbf{Think about how the F-value and the p-value change when the number $N$ (the replication = number of INDEPENDENT data points) changes.}
+  
 \end{frame}
+
 
 \begin{frame}{Mixed Effect Models}
   \begin{enumerate}
@@ -838,7 +841,7 @@ some PRACTICAL guidelines of what is Fixed and what is Random (after M. Crawley:
 
 \begin{frame}{Some Sources for Further Reading}
   \begin{itemize}
-    \item \href{https://stats.stackexchange.com/questions/4700/what-is-the-difference-between-fixed-effect-random-effect-and-mixed-effect-mode/4702#4702}{What is the difference between fixed-effect, random-effect, and mixed-effect models?}
+    \item \href{https://stats.stackexchange.com/questions/4700/what-is-the-difference-between-fixed-effect-random-effect-and-mixed-effect-mode/4702\#4702}{What is the difference between fixed-effect, random-effect, and mixed-effect models?}
     \item \href{https://dynamicecology.wordpress.com/2015/11/04/is-it-a-fixed-or-random-effect/}{Is it a fixed or random effect?}
     \item \href{https://gkhajduk.github.io/2017-03-09-mixed-models/}{Gabriela Hajduk on Mixed Effects Models}
   \end{itemize}
@@ -857,8 +860,8 @@ ONLINE
 BOOKS
   \begin{itemize}
     \item Zuur et al. Mixed Effects Models and Extensions in Ecology with R link
-    \item Pinheiro & Bates Mixed-Effects Models in S and S-PLUS link
-    \item Crawley The R-Book, chapters 11 & 19 (pdfs throughout the WWW) link
+    \item Pinheiro \& Bates Mixed-Effects Models in S and S-PLUS link
+    \item Crawley The R-Book, chapters 11 \& 19 (pdfs throughout the WWW) link
   \end{itemize}
   
 \end{frame}
