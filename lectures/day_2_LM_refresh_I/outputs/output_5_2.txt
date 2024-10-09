@@ -1,4 +1,0 @@
-sqrt(diag(solve(-optimised$hessian)))
-
-  beta_0   beta_1 
-3.690630 1.425256 

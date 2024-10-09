@@ -1,0 +1,5 @@
+Subject = pdLogChol(age) 
+            Variance   StdDev    Corr  
+(Intercept) 3.89140059 1.9726633 (Intr)
+age         0.02449773 0.1565175 -0.503
+Residual    2.65554484 1.6295843     

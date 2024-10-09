@@ -1,0 +1,3 @@
+ Groups   Name        Std.Dev.
+ Subject  (Intercept) 1.8162  
+ Residual             1.3864  

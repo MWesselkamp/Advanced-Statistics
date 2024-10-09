@@ -1,0 +1,6 @@
+4 x 4 Matrix of class "dpoMatrix"
+                     (Intercept) I(age - 8) SexFemale I(age - 8):SexFemale
+(Intercept)                 0.28      -0.02     -0.28                 0.02
+I(age - 8)                 -0.02       0.01      0.02                -0.01
+SexFemale                  -0.28       0.02      0.68                -0.04
+I(age - 8):SexFemale        0.02      -0.01     -0.04                 0.02

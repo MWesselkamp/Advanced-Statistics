@@ -1,0 +1,20 @@
+Call:
+lm(formula = response ~ treat + group)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.4635 -0.3552  0.1093  0.6364  1.2629 
+
+Coefficients: (1 not defined because of singularities)
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   7.6224     0.2768  27.533  < 2e-16 ***
+treatB        0.1070     0.3915   0.273    0.786    
+group2        0.4276     0.3915   1.092    0.282    
+group3       -2.4443     0.3915  -6.243 3.29e-07 ***
+group4            NA         NA      NA       NA    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.8755 on 36 degrees of freedom
+Multiple R-squared:  0.6371,    Adjusted R-squared:  0.6069 
+F-statistic: 21.07 on 3 and 36 DF,  p-value: 4.708e-08

@@ -1,0 +1,4 @@
+ Groups    Name        Std.Dev.
+ Subject   (Intercept) 1.76496 
+ Subject.1 I(age - 8)  0.16953 
+ Residual              1.31747 

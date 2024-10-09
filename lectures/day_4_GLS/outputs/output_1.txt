@@ -1,0 +1,3 @@
+            Df Sum Sq Mean Sq F value Pr(>F)
+treat        1  1.766   1.766   1.147  0.396
+Residuals    2  3.079   1.539 

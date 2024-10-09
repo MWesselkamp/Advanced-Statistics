@@ -1,0 +1,4 @@
+    Shapiro-Wilk normality test
+
+data:  ranef(m.f.2)$plant[, 1]
+W = 0.98228, p-value = 0.9912

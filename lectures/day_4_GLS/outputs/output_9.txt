@@ -1,0 +1,25 @@
+Generalized least squares fit by REML
+  Model: root ~ week * fertilizer 
+  Data: fertilizer 
+       AIC      BIC   logLik
+  123.3916 133.5184 -56.6958
+
+Coefficients:
+                            Value Std.Error   t-value p-value
+(Intercept)            -0.2223333 0.2433286 -0.913716  0.3648
+week                    0.9833333 0.0366832 26.806116  0.0000
+fertilizercontrol      -0.7576667 0.3441186 -2.201760  0.0318
+week:fertilizercontrol -0.0916667 0.0518778 -1.766972  0.0827
+
+ Correlation: 
+                       (Intr) week   frtlzr
+week                   -0.905              
+fertilizercontrol      -0.707  0.640       
+week:fertilizercontrol  0.640 -0.707 -0.905
+
+Standardized residuals:
+       Min         Q1        Med         Q3        Max 
+-2.0881239 -0.6498992 -0.2539769  0.6506324  2.6201262 
+
+Residual standard error: 0.5682932 
+Degrees of freedom: 60 total; 56 residual

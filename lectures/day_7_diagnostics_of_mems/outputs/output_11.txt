@@ -1,0 +1,24 @@
+Linear mixed-effects model fit by REML
+  Data: NULL 
+  Log-restricted-likelihood: -205.7612
+  Fixed: distance ~ age * Sex 
+  (Intercept)           age     SexFemale age:SexFemale 
+   16.3406250     0.7843750     1.0321023    -0.3048295 
+
+Random effects:
+ Formula: ~age | Subject
+ Structure: General positive-definite, 
+            Log-Cholesky parametrization
+            StdDev    Corr  
+(Intercept) 1.9726633 (Intr)
+age         0.1565175 -0.503
+Residual    1.6295843       
+
+Variance function:
+ Structure: Different standard deviations per stratum
+ Formula: ~1 | Sex 
+ Parameter estimates:
+     Male    Female 
+1.0000000 0.4088466 
+Number of Observations: 108
+Number of Groups: 27 

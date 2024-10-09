@@ -2,18 +2,35 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{lmodern}
-\usepackage{verbatim}
 \renewcommand{\familydefault}{\sfdefault}
 \setbeamertemplate{navigation symbols}{}
 \usecolortheme{default}
 \usepackage{listings}
+\usepackage{subfig}
+\usepackage{fancyvrb}
+\usepackage{tcolorbox,xcolor,tikz}
+\tcbuselibrary{skins, breakable}
 
 \renewcommand{\topfraction}{0.9}
 
-\lstset{
-basicstyle=\scriptsize\tt,
-}
+\newenvironment{VerbatimIN}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    colback=lightgray,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
 
+ \newenvironment{VerbatimOUT}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
 
 \title{Mixed Effects Models - Day 1}
 \subtitle{What are Mixed Effects Models, why and when should you use them, and what can you do with them}
@@ -67,7 +84,8 @@ basicstyle=\scriptsize\tt,
   \end{center}
 \end{frame}
 
-\begin{frame}{There is a Difference Between Two Treatments...}
+\begin{frame}[fragile]
+\frametitle{{There is a Difference Between Two Treatments...}}
   \begin{columns}[onlytextwidth] % align columns at the top
     \begin{column}{0.44\textwidth}
       \begin{itemize}
@@ -82,15 +100,21 @@ basicstyle=\scriptsize\tt,
       \end{center}
     \end{column}
   \end{columns}
+  \tiny
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Analysis of Variance Table
 
-  %\verbatiminput{lectures/day_1_intro_to_mems/outputs/output_1.txt}
-    \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_1.txt}
-
+Response: response
+          Df Sum Sq Mean Sq F value  Pr(>F)   
+treat      1 17.660 17.6603  11.495 0.00164 **
+Residuals 38 58.379  1.5363                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1      
+  \end{VerbatimOUT}
 \end{frame}
 
-\begin{frame}{Or is There?}
-
-
+\begin{frame}[fragile]
+\frametitle{Or is There?}
   \begin{columns}[onlytextwidth] % align columns at the top
     \begin{column}{0.44\textwidth}
   \begin{itemize}
@@ -105,9 +129,16 @@ basicstyle=\scriptsize\tt,
       \end{center}
     \end{column}
   \end{columns}
-
-  %\verbatiminput{lectures/day_1_intro_to_mems/outputs/output_1.txt}
-    \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_2.txt}
+  \tiny
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Data: example_2
+Models:
+mod.2b: response ~ 1 + (1 | group)
+mod.2a: response ~ treat + (1 | group)
+       npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)
+mod.2b    3 119.92 124.98 -56.958   113.92                     
+mod.2a    4 120.10 126.86 -56.051   112.10 1.8135  1     0.1781
+  \end{VerbatimOUT}
 
 \end{frame}
 
@@ -121,6 +152,7 @@ basicstyle=\scriptsize\tt,
   \resizebox{\linewidth}{!}{
   \begin{table}[h]
     \centering
+    \footnotesize
     \begin{tabular}{lccccc}
       \hline
       Source & SS & df & MS & F & p \\
@@ -133,6 +165,8 @@ basicstyle=\scriptsize\tt,
   \end{table}}
 
   \vspace{0.5cm}
+
+  \normalsize
   \textbf{Think about how the F-value and the p-value change when the number \(N\) (the replication = number of INDEPENDENT data points) changes.}
 \end{frame}
 
@@ -155,19 +189,38 @@ basicstyle=\scriptsize\tt,
   \end{center}
 \end{frame}
 
-\begin{frame}{What Do You Expect When You See This Plot?}
-
-The analysis using a Linear Model
+\begin{frame}[fragile]
+\frametitle{What Do You Expect When You See This Plot?}
+\centering\textbf{The analysis using a Linear Model}
+\vspace{0.7cm}
 
 \begin{columns}[onlytextwidth] % align columns at the top
-    \begin{column}{0.5\textwidth}
-    \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-11-1.png} % Replace 
+    \begin{column}{0.35\textwidth}
+    \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-11-1.png}
   \end{column}
     \hspace{0.0\textwidth} % add small horizontal space
-\begin{column}{0.6\textwidth}
-    \scalebox{0.6}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_3.txt}
-      }
+\begin{column}{0.7\textwidth}
+    \tiny
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Call:
+lm(formula = y2 ~ x1, data = example_1)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-57.449 -24.192  -1.917  24.017  51.347 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 334.9857     8.7161  38.433  < 2e-16 ***
+x1           -4.0120     0.4021  -9.977 3.64e-12 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 29.06 on 38 degrees 
+of freedom
+Multiple R-squared:  0.7237,    Adjusted R-squared:  0.7164 
+F-statistic: 99.54 on 1 and 38 DF,  p-value: 3.641e-12
+    \end{VerbatimOUT}
     \end{column}
   \end{columns}
 
@@ -175,36 +228,79 @@ The analysis using a Linear Model
 
 \begin{frame}{What if You Knew That Some Data Points Group Together?}
   \begin{center}
-    \includegraphics[width=0.6\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-14-1.png} % Replace with your figure path
+    \includegraphics[width=0.6\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-12-1.png} % Replace with your figure path
   \end{center}
 \end{frame}
 
-\begin{frame}{What if You Knew That Some Data Points Group Together?}
+\begin{frame}[fragile]
+\frametitle{What if You Knew That Some Data Points Group Together?}
 
-The analysis using a Linear Mixed Effects Model
+\textbf{The analysis using a Linear Mixed Effects Model}
+\vspace{0.5cm}
+
 \begin{columns}[onlytextwidth] % align columns at the top
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.4\textwidth}
     \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-14-1.png} % Replace 
   \end{column}
     \hspace{0.0\textwidth} % add small horizontal space
-\begin{column}{0.7\textwidth}
-    \scalebox{0.6}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_4.txt}
-      }
+\begin{column}{0.6\textwidth}
+    \tiny\begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Linear mixed model fit by REML ['lmerMod']
+Formula: y2 ~ x1 + (x1 | subject)
+
+REML criterion at convergence: 260
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.67185 -0.42119  0.02881  0.49828  1.79544 
+
+Random effects:
+ Groups   Name        Variance  Std.Dev. Corr
+ subject  (Intercept) 2.982e+04 172.6890     
+          x1          1.114e-02   0.1055 1.00
+ Residual             3.828e+00   1.9566     
+Number of obs: 40, groups:  subject, 10
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)   72.942     54.791   1.331
+x1            10.275      0.245  41.944
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see ?isSingular
+    \end{VerbatimOUT}
     \end{column}
   \end{columns}
 
 \end{frame}
 
 
-\begin{frame}{Analysis Using a Linear Mixed Effects Model}
+\begin{frame}[fragile]
+\frametitle{Analysis Using a Linear Mixed Effects Model}
   \begin{itemize}
     \item A Mixed Effects Model is akin to modelling another variable.
   \end{itemize}
+  \scriptsize
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Call:
+lm(formula = y2 ~ x1 + x2, data = example_1)
 
-  \scalebox{0.8}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_5.txt}
-      }
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.2069 -0.9754 -0.1155  1.1961  4.0294 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 502.08553    1.85555  270.59   <2e-16 ***
+x1           10.19269    0.15245   66.86   <2e-16 ***
+x2           -6.07642    0.06425  -94.58   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.89 on 37 degrees 
+of freedom
+Multiple R-squared:  0.9989,    Adjusted R-squared:  0.9988 
+F-statistic: 1.624e+04 on 2 and 37 DF,  p-value: < 2.2e-16
+  \end{VerbatimOUT}
       
 \end{frame}
 
@@ -248,7 +344,7 @@ The analysis using a Linear Mixed Effects Model
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.6\textwidth}
       \begin{center}
-        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-22-1.png}
+        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-18-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -265,7 +361,7 @@ The analysis using a Linear Mixed Effects Model
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.6\textwidth}
       \begin{center}
-        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-22-1.png}
+        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-19-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -281,7 +377,7 @@ The analysis using a Linear Mixed Effects Model
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.6\textwidth}
       \begin{center}
-        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-22-1.png}
+        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-20-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -304,16 +400,26 @@ The analysis using a Linear Mixed Effects Model
 \end{frame}
 
 
-\begin{frame}{Variance in a Linear Model}
+\begin{frame}[fragile]
+\frametitle{Variance in a Linear Model}
 
   \begin{columns}[onlytextwidth] % align columns at the top
-    \begin{column}{0.54\textwidth}
-  \scalebox{0.6}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_5.txt}
-      }
+    \begin{column}{0.6\textwidth}
+    \tiny
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Analysis of Variance Table
+
+Response: response
+          Df  Sum Sq Mean Sq F value    Pr(>F)    
+treatment  1 187.396 187.396  121.98 2.011e-13 ***
+Residuals 38  58.379   1.536                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 
+'.' 0.1 ' ' 1
+    \end{VerbatimOUT}
     \end{column}
     \hspace{0.02\textwidth} % add small horizontal space
-    \begin{column}{0.46\textwidth}
+    \begin{column}{0.4\textwidth}
       \begin{center}
         \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-22-1.png}
       \end{center}
@@ -335,7 +441,7 @@ The analysis using a Linear Mixed Effects Model
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.46\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-31-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-23-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -350,7 +456,7 @@ The analysis using a Linear Mixed Effects Model
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.46\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-33-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-24-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -366,7 +472,7 @@ The analysis using a Linear Mixed Effects Model
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.46\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-25-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -381,14 +487,14 @@ The analysis using a Linear Mixed Effects Model
   \begin{columns}[onlytextwidth] 
   \begin{column}{0.5\textwidth}
   \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-27-1.png}
       \end{center}
       \[ \text{variance}_{\text{among}} = 1.462 \]
   \end{column}
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.5\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-28-1.png}
       \end{center}
         \[ \text{variance}_{\text{among}} = 0.147 \]
     \end{column}
@@ -402,7 +508,7 @@ The analysis using a Linear Mixed Effects Model
   \begin{columns}[onlytextwidth] 
   \begin{column}{0.5\textwidth}
   \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-30-1.png}
       \end{center}
       \[ \text{variance}_{\text{within}} = 0.875 \]
   \end{column}
@@ -443,25 +549,23 @@ The analysis using a Linear Mixed Effects Model
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Adjusted Intra-Group Correlation}
-  \footnotesize{accounting for \textbf{only} among-group differences changes the variances and the ICC}
-
+\begin{frame}[fragile]
+\frametitle{Adjusted Intra-Group Correlation}
+  \footnotesize{Accounting for \textbf{only} among-group differences changes the variances and the ICC}
+  \tiny
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+lmer(formula = response ~ treatment + (1 | group))  # LEFT
+lmer(formula = response ~ 1 + (1 | group))          # RIGHT
+    \end{VerbatimIN}
+  \footnotesize
   \begin{columns}[onlytextwidth] 
   \begin{column}{0.5\textwidth}
-  \scalebox{0.65}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_7.txt}
-      }
-
-    \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
-    
+    \includegraphics[width=0.8\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-32-1.png}    
   \end{column}
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.5\textwidth}
-    \scalebox{0.65}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_8.txt}
-      }
       \centering
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
+        \includegraphics[width=0.7\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-34-1.png}
     \end{column}
   \end{columns}
 
@@ -469,9 +573,9 @@ The analysis using a Linear Mixed Effects Model
   \begin{column}{0.5\textwidth}
   \textbf{with} treatment \\
   \begin{itemize}
-      \item $\text{variance}_{\text{among}} = 0.875$
-      \item $\text{variance}_{\text{among}} = 0.875$ 
-      \item ICC =  
+      \item $\text{variance}_{\text{among}} = 1.463$
+      \item $\text{variance}_{\text{among}} = 0.766$ 
+      \item ICC =  0.656
   \end{itemize}
 
   \end{column}
@@ -479,9 +583,9 @@ The analysis using a Linear Mixed Effects Model
     \begin{column}{0.5\textwidth}
     \textbf{without} treatment
     \begin{itemize}
-      \item $\text{variance}_{\text{among}} = 0.875$
-      \item $\text{variance}_{\text{among}} = 0.875$ 
-      \item ICC =   
+      \item $\text{variance}_{\text{among}} = 7.196$
+      \item $\text{variance}_{\text{among}} = 0.766$ 
+      \item ICC =   0.904
   \end{itemize}
     \end{column}
   \end{columns}
@@ -517,7 +621,7 @@ The analysis using a Linear Mixed Effects Model
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.5\textwidth}
       \begin{center}
-        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
+        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-35-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -529,46 +633,77 @@ The analysis using a Linear Mixed Effects Model
   
 \end{frame}
 
-\begin{frame}{Group-Level Parameters}
+\begin{frame}[fragile]
+\frametitle{Group-Level Parameters}
 
 \textbf{Random Intercepts}
 
 \begin{columns}[onlytextwidth] 
   \begin{column}{0.5\textwidth}
-      \scalebox{0.85}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_9.txt}
-      }    
+  \scriptsize
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+$group
+  (Intercept)
+1  -0.2031451
+2   0.2031451
+3  -1.1613079
+4   1.1613079
+
+with conditional variances 
+for "group"      
+  \end{VerbatimOUT}
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+treatmentA treatmentB 
+  9.836181   5.507260  
+  \end{VerbatimOUT}
       \end{column}
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.5\textwidth}
       \begin{center}
-        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-36-1.png}
+        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-37-1.png}
       \end{center}
     \end{column}
   \end{columns}
-  
 
 \end{frame}
 
 
-\begin{frame}{Group-Level Parameters}
+\begin{frame}[fragile]
+\frametitle{Group-Level Parameters}
 
 \textbf{Random intercepts and random slopes}
 
 \begin{columns}[onlytextwidth] 
   \begin{column}{0.5\textwidth}
-      \scalebox{0.85}{
-      \lstinputlisting[]{lectures/day_1_intro_to_mems/outputs/output_10.txt}
-      }    
+  \scriptsize
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+$subject
+   (Intercept)          x1
+1    247.69897  0.15137981
+2    200.13944  0.12231407
+3    172.20003  0.10523907
+4     81.20556  0.04962831
+5     19.86128  0.01213811
+6    -31.53238 -0.01927083
+7   -102.41808 -0.06259223
+8   -165.97361 -0.10143383
+9   -175.02052 -0.10696279
+10  -246.16068 -0.15043969
+
+with conditional variances 
+for "subject" 
+
+(Intercept)          x1 
+   72.94195    10.27548 
+  \end{VerbatimOUT}
       \end{column}
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.5\textwidth}
       \begin{center}
-        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-14-1.png}
+        \includegraphics[width=0.9\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-38-1.png}
       \end{center}
     \end{column}
   \end{columns}
-  
 
 \end{frame}
 

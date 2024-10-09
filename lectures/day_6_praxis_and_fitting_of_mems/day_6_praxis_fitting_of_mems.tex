@@ -1,32 +1,11 @@
 \documentclass{beamer}
-\usepackage{amsmath, amssymb}
+\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{listings}
-\usepackage{color}
+\usepackage{subfig}
+\usepackage{hyperref}
+\usepackage{fancyvrb}
 
-% Set up R code formatting
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-\lstdefinestyle{Rstyle}{
-    backgroundcolor=\color{backcolour},
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,
-    breaklines=true,
-    captionpos=b,
-    keepspaces=true,
-    numbers=left,
-    numbersep=5pt,
-    showspaces=false,
-    showstringspaces=false,
-    showtabs=false,
-    tabsize=2
-}
 
 \title{Mixed Effects Models - Day 6}
 \subtitle{Praxis and Fitting of Mixed Effects Models in R}
@@ -49,254 +28,571 @@
     \begin{itemize}
         \item $\mathbf{y}$: measured response values
         \item $\mathbf{X}$: Fixed Effects design matrix
-        \item $\mathbf{b}$: Fixed Effects parameter vector
-        \item $\mathbf{e}$: errors $\epsilon \sim \mathcal{N}(0, \mathbf{R})$
+        \item $\mathbf{b}$: Fixed Effects parameter vector of $\mathbf{X}$
+        \item $\mathbf{e}$: Vector of the errors $\epsilon$, which are normally distributed (mean = 0; variance by residual variance-covariance matrix \textbf{R})
     \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{Stochastic Components of Mixed Effects Models}
     \begin{itemize}
-        \item The first stochastic part describes how random effects parameters $\mathbf{u}$ vary around 0: 
+        \item The \textbf{first stochastic part} describes how random effects parameters $\mathbf{u}$ vary around 0 and is given by the random effects variance-covariance matrix \textbf{G}
         \[
         \mathbf{u} \sim \mathcal{N}(0, \mathbf{G})
         \]
-        \item The second stochastic part describes the residual variance $\mathbf{e}$:
+        \item The \textbf{second stochastic part} describes the remaining and unexplained (\textit{residual}) variance:
         \[
         \mathbf{e} \sim \mathcal{N}(0, \mathbf{R})
         \]
+        It describes how the measurements \textbf{e} vary around 0, \textbf{After} accounting for the fixed and random effects and is given by the residual variance-covariance matrix \textbf{R}.
     \end{itemize}
 \end{frame}
-
 \begin{frame}[fragile]
     \frametitle{Orthodont Data Example}
     \textbf{The size (distance) of 16 boys and 11 girls measured 4 times at ages 8, 10, 12, 14}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    library(nlme)
-    library(lme4)
-    library(lattice)
-    data("Orthodont")
-    attach(Orthodont)
-
-    str(Orthodont, give.attr = FALSE, vec.length = 2)
-    xtabs(~Sex+age, Orthodont)
-    \end{lstlisting}
+    \begin{verbatim}
+str(Orthodont, give.attr = FALSE, vec.length = 2)        
+    \end{verbatim}
+    \tiny\scalebox{0.8}{
+    \lstinputlisting[]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_1_1.txt}
+    }
+    \vspace{0.5cm}
+    
+    \normalsize\textbf{Subject and Sex as categorical, distance and age as continous variables}
+    \begin{Verbatim}[frame=single]
+xtabs(~Sex+age, Orthodont)
+    \end{Verbatim}
+    \small\scalebox{1}{
+    \lstinputlisting[frame=single]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_1_2.txt}
+    }
+    \vspace{0.2cm}
+    
+    \normalsize\textbf{Unbalanced, full-factorial, always same age values}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Data Plot: Distance vs Age}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    xyplot(distance ~ age|Sex, groups = Subject, type = "o")
-    \end{lstlisting}
-    \includegraphics[width=\textwidth]{your_plot.png}
+    \textbf{The size (distance) of 16 boys and 11 girls measured 4 times at ages 8, 10, 12, 14}
+    \small\begin{Verbatim}[frame=single]
+xyplot(distance ~ age|Sex, groups = Subject, type = "o")
+    \end{Verbatim}
+    \begin{center}
+    \includegraphics[width=0.6\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-3-1.png} 
+    \end{center}
 \end{frame}
+
 
 \begin{frame}[fragile]
     \frametitle{Avoidance of LMM I: Taking Averages}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    dist <- tapply(distance, Subject, mean)
-    sex <- as.factor(c(rep("boy", 16), rep("girl", 11)))
-    mod <- lm(dist ~ sex)
-    summary(mod)$coef
-    \end{lstlisting}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \tiny\begin{Verbatim}[frame=single]
+dist <- tapply(distance, Subject, mean)
+sex <- as.factor(c(rep("boy", 16), 
+                   rep("girl", 11)))
+mod <- lm(dist ~ sex)
+summary(mod)$coef
+            \end{Verbatim}
+            \tiny\scalebox{1}{
+            \lstinputlisting[frame=single]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_2.txt}
+            }
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-5-1.png}
+        \end{column}
+    \end{columns}
+    \vspace{0.5cm}
+    
     \textbf{Loss of information: no age-effect anymore!}
 \end{frame}
-
 \begin{frame}[fragile]
-    \frametitle{Fitting a Linear Mixed Effects Model}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    mod.lmer.1 <- lmer(distance ~ I(age-8) * Sex + (I(age-8)|Subject))
-    \end{lstlisting}
-    Subtracting the minimum age of 8 years from the age-variable allows for more meaningful interpretation.
-\end{frame}
+    \frametitle{Avoidance of LMM II: Ignoring grouping}
+    \textit{aka complete pooling}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \small\begin{verbatim}
+mod <- lm(dist ~ I(age-8) * Sex)
+summary(mod)$coef[,c(1:2,4)]
+            \end{verbatim}
+            \tiny\scalebox{1.2}{
+            \lstinputlisting[]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_3.txt}
+            }
+            \normalsize\begin{verbatim}
+summary(mod)$df[1:2]
 
-\begin{frame}[fragile]
-    \frametitle{Extracting Variance Components}
-    From the G-side matrix:
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    VarCorr(mod.lmer.1)
-    1.7983231 ^ 2 # Random intercept variance at age 8
-    \end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Syntax for `gls` Models}
-    \textbf{Fitting a marginal model using `gls` with AR1 correlation structure:}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    mod.gls <- gls(distance ~ I(age-8) * Sex, correlation = corAR1(form = ~ 1|Subject))
-    summary(mod.gls)
-    \end{lstlisting}
+[1]   4 104
+            \end{verbatim}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-7-1.png}
+        \end{column}
+    \end{columns}
+    \vspace{0.5cm}
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Extracting the AR1 Variance-Covariance Matrix}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    getVarCov(mod.gls)
-    \end{lstlisting}
-\end{frame}
+    \frametitle{Avoidance of LMM III: Covariate}
+    \textit{Child as covariate (= no pooling)}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \small\begin{verbatim}
+mod <- lm(distance ~ I(age-8) * Sex * Subject)
+head(summary(mod)$coef)[,c(1:2,4)]
+            \end{verbatim}
+            \tiny\scalebox{1}{
+            \lstinputlisting[]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_4.txt}
+            }
+            \normalsize\begin{verbatim}
+summary(mod)$df[1:2]
 
-\begin{frame}
-    \frametitle{Recipe for Building a Mixed Effects Model}
-    \begin{itemize}
-        \item Define the fixed effects and their interactions
-        \item Choose the distribution for the errors
-        \item Identify the grouping and random effects
-        \item Check for nesting or crossing of random effects
-        \item Specify random slopes or contrasts
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Spot the Grouping in the Data}
-    \begin{itemize}
-        \item How many random effects are there in the data?
-        \item If two or more, are they nested or crossed?
-        \item Can you specify random slopes or random contrasts for one or all of the random effects?
-    \end{itemize}
+[1] 54 54
+            \end{verbatim}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-9-1.png}
+        \end{column}
+    \end{columns}
+    \vspace{0.5cm}
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{R Code: Data Plot}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    xyplot(distance ~ age | Sex, groups = Subject, type = "o")
-    \end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Fitting a Linear Mixed Effects Model}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    mod.lmer.1 <- lmer(distance ~ I(age-8) * Sex + (I(age-8)|Subject))
-    \end{lstlisting}
-    Subtraction of the minimum age (8 years) from the age variable makes interpretation more meaningful.
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Extracting Variance Components}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    VarCorr(mod.lmer.1)
-    1.7983231 ^ 2
-    \end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Variance-Covariance Matrix of Parameters}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    round(vcov(mod.lmer.1), 2)
-    \end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Combined Variance-Covariance Matrix of Residuals}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    var.d <- crossprod(getME(mod.lmer.1,"Lambdat"))
-    Zt <- getME(mod.lmer.1,"Zt")
-    vres <- sigma(mod.lmer.1)^2
-    var.b <- (t(Zt) %*% var.d %*% Zt)
-    sI <- vres * Diagonal(nrow(Orthodont))
-    var.y <- var.b + sI
-    image(var.y)
-    \end{lstlisting}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Keep It Maximal Principle}
-    \small{
-    "We show that LMMs generalize best when they include the maximal random effects structure justified by the design." \\
-    \textit{Barr et al. (2013)}
+    \frametitle{Avoidance of LMM IV: fitting a "marginal" gls model}
+    \small
+    \begin{verbatim}
+mod.gls <- gls(distance ~ I(age-8) * Sex, 
+               correlation = corAR1(form = ~ 1|Subject))
+summary(mod.gls)
+    \end{verbatim}
+    \scalebox{0.5}{
+        \lstinputlisting[]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_5.txt}
     }
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Random Intercept - Random Slope}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    mod.lmer.1 <- lmer(distance ~ I(age-8) * Sex + (I(age-8) | Subject))
-    VarCorr(mod.lmer.1)
-    \end{lstlisting}
+    \frametitle{Avoidance of LMM IV: fitting a "marginal" gls model}
+    \textbf{Extracting the AR1-Variance-Covariance Matrix $V_i:$}
+    \begin{verbatim}
+getVarCov(mod.gls)
+    \end{verbatim}
+    \scalebox{0.8}{
+        \lstinputlisting[]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_6.txt}
+    }
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Random Intercept Without Correlation}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    mod.lmer.2 <- lmer(distance ~ I(age-8) * Sex + (I(age-8) || Subject))
-    VarCorr(mod.lmer.2)
-    \end{lstlisting}
+    \frametitle{GLS predictions}
+    \centering\includegraphics[width=0.9\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-12-1.png}
+    \tiny
+    \begin{verbatim}
+newdata.gls <- data.frame(age = rep(seq(8,14,0.1), 2), 
+                          Sex = factor(rep(c("Male","Female"),each = 61)))
+predictions.gls <- predict(mod.gls, newdata.gls)
+
+par(mfrow = c(1,2), las = 1, pty = "s", tcl = 0.5, mgp = c(2.0,0.5,0))
+
+plot(distance ~ age, Orthodont[1:64,], xlim = c(8,14), ylim = c(15,35), type = "l", col = "blue")
+lines(seq(8,14,0.1), as.vector(predictions.gls)[1:61], lwd = 5, lty = 2, col = "darkblue")
+
+plot(distance ~ age, Orthodont[65:108,], xlim = c(8,14), ylim = c(15,35), type = "l", col = "red")
+lines(seq(8,14,0.1), as.vector(predictions.gls)[62:122], lwd = 5, lty = 2, col = "darkred")                
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{}
+    \huge\color{purple}\textbf{Let's try a Mixed Effect Model!}
+\end{frame}
+
+\begin{frame}
+    \frametitle{The recipe to a good model}
+    \begin{itemize}
+        \item[] \textbf{True for all models:}
+        \item define the deterministic part of the model, i.e. find the fixed effects incl. their interactions and potential quadratic / cubic etc. terms.
+        \item choose a distribution for the errors
+        \item[] 
+        \item[] \textbf{Additionally for Mixed Effect Models:}
+        \item spot the grouping in the data
+        \item how many random effects are there in the data?
+        \item if two or more, are they nested or crossed?
+        \item can you specify random slopes / random contrasts for one or all of the random effects?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Can you spot the ingredients?}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item spot the grouping in the data
+                \item how many random effects are there in the data?
+                \item if two or more, are they nested or crossed?
+                \item can you specify random slopes / random contrasts for one or all of the random effects?
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-14-1.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Fitting a Linear Mixed Effects Model}
+    In R, we fit linear mixed effect regression models using the \textit{lme4} package:
+    \begin{Verbatim}[frame=single]
+mod.lmer.1 <- 
+lmer(distance ~ I(age-8) * Sex + (I(age-8)|Subject))
+    \end{Verbatim}
+    Notice the subtraction of the minimum age of 8 years from the age-variable. The fixed effect Sex is now interpreted as the difference in size among boys and girls NOT at age = 0 years, but at age = 8 years, which is more meaningful for this data .
+    The same interpretation of course holds true for a random slope as well.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Extracting Variance Components}
+    From the G-side matrix: The parameters for the variances of the random intercept, random slope, their correlations.
+    From the R-side matrix: The residual variance. They are all expressed here as standard deviation, square that to get the variances.
+    \begin{Verbatim}[frame=single]
+VarCorr(mod.lmer.1)
+    \end{Verbatim}
+    \scalebox{0.8}{
+        \lstinputlisting[]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_7.txt}
+    }
+    \begin{equation*}
+        1.7983231^2 = 3.233966
+    \end{equation*}
+    We square the SD for the random intercept, which is the variance of the random intercept at age = 8, due to the centering.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Extracting Variance Components}
+    \textbf{The Variance-Covariance Matrix of Parameters:}
+    \vspace{0.5cm}
+    
+    \begin{Verbatim}[frame=single]
+round(vcov(mod.lmer.1), 2)
+    \end{Verbatim}
+    \tiny\scalebox{1}{
+        \lstinputlisting[]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_8.txt}
+    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Combined Variance-Covariance Matrix of Residuals}
+    \tiny\begin{Verbatim}[frame=single]
+# get components
+var.d <- crossprod(getME(mod.lmer.1,"Lambdat")) # based on BLUPs
+Zt <- getME(mod.lmer.1,"Zt") # transposed model matrix
+vres <- sigma(mod.lmer.1)^2 # residual variance
+
+# combine them
+var.b <- (t(Zt) %*% var.d %*% Zt)
+sI <- vres * Diagonal(nrow(Orthodont))
+var.y <- var.b + sI
+image(var.y)
+    \end{Verbatim}
+
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-19-1.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Now let's have a look at the full model summary}
+    \small\begin{Verbatim}[frame=single]
+summary(mod.lmer.1)
+    \end{Verbatim}
+    \tiny\scalebox{1}{
+        \lstinputlisting[frame=single]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_9.txt}
+    }
+\end{frame}
+
+\begin{frame}
+    \frametitle{The Random Effects Structure}
+    \large\textbf{Keep it maximal:}
+    \vspace{0.5cm}
+    
+    \normalsize{"We show that LMMs generalize best when they include the maximal random effects structure justified by the design. Random-intercepts-only LMMs used on within-subjects data from populations where subjects vary in their sensitivity to experimental manipulations always generalize worse. Maximal LMMs should be the 'gold standard' for confirmatory hypothesis testing."}
+    \vspace{1cm}
+    \small\href{https://europepmc.org/backend/ptpmcrender.fcgi?accid=PMC3881361&blobtype=pdf}{Barr, D. J.; Levy, R.; Scheepers, C. \& Tily, H. J. (2013) Random effects structure for confirmatory hypothesis testing: Keep it maximal. Journal of Memory and Language, 68, 255-278.} 
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Random effect structures}
+    \textbf{Random Intercept - Random Slope}
+
+    \small\begin{Verbatim}[frame=single]
+mod.lmer.1 <- 
+lmer(distance ~ I(age-8) * Sex + (I(age-8) | Subject))
+# in line with the KEEP IT MAXIMAL principle
+
+VarCorr(mod.lmer.1)
+    \end{Verbatim}
+    \tiny\scalebox{1}{
+        \lstinputlisting[frame=single]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_10.txt}
+    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Random Intercept - Random Slope...}
+    \textbf{... without correlation between random effects parameters}
+    
+    \small\begin{Verbatim}[frame=single]
+mod.lmer.2 <- 
+lmer(distance ~ I(age-8) * Sex + (I(age-8) || Subject))
+# no correlation, not the double vertical bar
+
+VarCorr(mod.lmer.2)
+    \end{Verbatim}
+    \tiny\scalebox{1}{
+        \lstinputlisting[frame=single]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_11.txt}
+    }
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Random Intercept Only}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    mod.lmer.3 <- lmer(distance ~ I(age-8) * Sex + (1 | Subject))
-    VarCorr(mod.lmer.3)
-    \end{lstlisting}
+    
+    \small\begin{Verbatim}[frame=single]
+mod.lmer.3 <- 
+lmer(distance ~ I(age-8) * Sex + (1 | Subject))
+# violates the KEEP IT MAXIMAL principle
+
+VarCorr(mod.lmer.3)
+    \end{Verbatim}
+    \tiny\scalebox{1}{
+        \lstinputlisting[frame=single]{lectures/day_6_praxis_and_fitting_of_mems/outputs/output_12.txt}
+    }
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Design Matrix for Predictions}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    newdata.lmer <- data.frame(
-      age = rep(seq(8, 14, 0.1), 27),
-      Sex = c(rep("Male", 16 * 61), rep("Female", 11 * 61)),
-      Subject = rep(levels(Orthodont$Subject), each = 61),
-      distance = rep(NA, 27 * 61))
-    \end{lstlisting}
+    \frametitle{More on Random Effects Structures}
+    \Large
+    \color{blue}\href{https://stats.stackexchange.com/questions/13166/rs-lmer-cheat-sheet?lq=1}{R's lmer cheat sheet}
+    \vspace{0.5cm}
+    
+    \color{blue}\href{http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#model-specification}{GLMM FAQ: Model specification}
+\end{frame}
+
+\begin{frame}
+    \frametitle{}
+    \centering
+    \huge\color{purple}\textbf{Break!}
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Population-Average Predictions}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    newdata.lmer$distance <- predict(mod.lmer.1, newdata.lmer, re.form = NA)
-    xyplot(distance ~ age | Subject, data = newdata.lmer, type = "l", lwd = 3)
-    \end{lstlisting}
+    \frametitle{Predictions with LMM}
+    \textbf{We need to give the new design matrix a vector for the levels of the Random Effects}
+    \vspace{0.5cm}
+    
+    \small\begin{Verbatim}[frame=single]
+newdata.lmer <- data.frame(
+ age = rep(seq(8, 14, 0.1), 27), # 61 new age values
+ Sex = c(rep("Male", 16 * 61), rep("Female", 11 * 61)),
+ Subject = rep(levels(Orthodont$Subject), each = 61),
+ # one for the identity of the 27 children measured
+ distance = rep(NA, 27 * 61))
+    \end{Verbatim}
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Confidence Intervals for Population Trend}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    X <- model.matrix(terms(mod.lmer.1), newdata.lmer)
-    XVX <- X %*% vcov(mod.lmer.1) %*% t(X)
-    se <- sqrt(diag(XVX))
-    conf <- se * 1.96
-    newdata.lmer <- data.frame(newdata.lmer, lo = newdata.lmer$distance - conf, hi = newdata.lmer$distance + conf)
-    \end{lstlisting}
+    \frametitle{}
+    Set re.form = NA or re.form = ~ 0 for the population-average predictions, \textbf{marginalising} over the random effects levels (i.e. setting random effects to zero)
+    
+    \small\begin{Verbatim}[frame=single]
+newdata.lmer$distance <- 
+predict(mod.lmer.1, newdata.lmer, re.form = NA)
+xyplot(distance ~ age | Subject, 
+data = newdata.lmer, type = "l", lwd = 3)
+    \end{Verbatim}
+    \begin{center}
+       \includegraphics[width=0.5\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-25-1.png} 
+    \end{center}
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Plot Confidence Intervals}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    plot(distance ~ age, Orthodont[1:64,], type = "p", col = "blue")
-    lines(newdata.lmer$age[newdata.lmer$Sex =="Male"], newdata.lmer$distance[newdata.lmer$Sex=="Male"], lwd = 4, col = "darkblue")
-    lines(newdata.lmer$age[newdata.lmer$Sex =="Female"], newdata.lmer$distance[newdata.lmer$Sex=="Female"], lwd = 4, col = "darkred")
-    \end{lstlisting}
+    \frametitle{}
+    In contrast to the predictions of random effects levels (i.e. the BLUPs), re.form = NULL \textbf{conditions} on all random effects, re.form = (1 $|$ Subject) on Subject only, etc.
+    
+    \small\begin{Verbatim}[frame=single]
+newdata.lmer$distance <- 
+predict(mod.lmer.1, newdata.lmer, re.form = NULL)
+xyplot(distance ~ age|Subject, 
+data=newdata.lmer, type="l", lwd=3)
+    \end{Verbatim}
+    \begin{center}
+       \includegraphics[width=0.5\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-26-1.png} 
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{}
+    \textbf{Confidence intervals of population-trend WITHOUT random effects. Who remembers the steps from the second day?}
+    \vspace{0.5cm}
+    
+    \begin{itemize}
+        \item Create new design matrix $\mathit{X}$ and matrix multiply $\mathit{X}$ and $\mathit{\beta}$ to get predictions
+        \item Extract the variance-covariance matrix of parameters $\mathit{V}$
+        \item Compute $\mathit{XV X'}$ for variance-covariance matrix of predictions
+        \item Extract diagonal to get variances and the square root to get standard errors
+        \item Compute confidence interval based on normal approximation
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Confidence Intervals of Population-Trend}
+    \textbf{WITHOUT random effects}
+
+    \small\begin{Verbatim}[frame=single]
+newdata.lmer$distance <- 
+predict(mod.lmer.1, newdata.lmer, re.form = NA)
+# new design matrix
+X <- model.matrix(terms(mod.lmer.1), newdata.lmer) 
+XVX <- X \%*\% vcov(mod.lmer.1) \%*\% t(X) 
+# calculate SE
+se <- sqrt(diag(XVX)) 
+conf <- se * 1.96 
+# normal approximation to get confidence intervall
+
+newdata.lmer <- data.frame(newdata.lmer,
+    lo = newdata.lmer$distance - conf, 
+    hi = newdata.lmer$distance + conf)
+    \end{Verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Confidence Intervals for Population-Trend}
+    \textbf{WITHOUT random effects}
+
+    \begin{center}
+        \includegraphics[width=\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-28-1.png}
+    \end{center}
+    
+    \textbf{The confidence interval here only accounts for the fixed effects uncertainty}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Confidence Intervals of Population-Trend}
+    \textbf{WITH random effects}
+
+    \small\begin{Verbatim}[frame=single]
+X <- model.matrix(terms(mod.lmer.1), newdata.lmer[,1:4]) 
+# new design matrix
+XVX <- X %*% vcov(mod.lmer.1) %*% t(X) 
+
+# now add effects from Random Effects parameters 
+# (variances) but NOT uncertainty of RE parameters 
+#(variance of variances)
+vari <- diag(XVX) + VarCorr(mod.lmer.1)$Subject[1]  
+# calculate SE
+se <- sqrt(vari)           
+conf <- se * 1.96 
+# normal approximation to get confidence intervall
+
+newdata.lmer$lo <- newdata.lmer$distance - conf
+newdata.lmer$hi <- newdata.lmer$distance + conf
+    \end{Verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Confidence Intervals for Population-Trend}
+    \textbf{WITH random effects}
+
+    \begin{center}
+        \includegraphics[width=\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-30-1.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{}
+    \textbf{For predictions of Random Effects levels, set re.form = random effects structure or re.form = NULL}
+    \vspace{0.5cm}
+    
+    \small\begin{Verbatim}[frame=single]
+newdata.lmer$distance <- 
+predict(mod.lmer.1, newdata.lmer, re.form =  NULL)
+
+# newdata.lmer$distance <- 
+# predict(mod.lmer.1, newdata.lmer, 
+# re.form =  ~ (age|Subject))
+    \end{Verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{}
+    \begin{center}
+        \includegraphics[width=0.7\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-32-1.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{}
+    \textbf{Confidence intervalls of point estimates of Random Effects levels (BLUPs)}
+
+    \small\begin{Verbatim}[frame=single]
+cV <- ranef(mod.lmer.1, condVar = TRUE) 
+# Assumed identical for each BLUP.
+# This gives the confidence interval for the 
+# intercepts and slopes for each child.  
+library(lattice)
+dotplot(cV) 
+    \end{Verbatim}
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{lectures/day_6_praxis_and_fitting_of_mems/figures/unnamed-chunk-33-1.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{For more code see:}
+    \Large
+    \color{blue}\href{http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html}{FAQ list by B Bolker, co-developer of lme4 package}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Syntax for library(nlme)}
+    \textbf{There is a second R-package we use:}
+
+    \small\begin{Verbatim}[frame=single]
+mod.lme.1 <- 
+lme(distance~I(age-8) * Sex, random = ~ I(age-8)|Subject)
+# random slope and intercept
+
+mod.lme.2 <- 
+lme(distance~I(age-8) * Sex, random = ~ 1|Subject)
+# random intercept only
+    \end{Verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{nlme vs lme4}
+    \textbf{Differences:}
+    \begin{itemize}
+        \item REML is differently turned on and off
+        \item Marginalizing over Random Effects levels in predict function
+        \item nlme() allows for correlations of data points
+        \item nlme easy for Heterogeneous Variance models (not covered!)
+        \item lme4() can fit GLMMs
+        \item lme4() easy for crossed Random Effects
+        \item Intervals() in nlme() gives approximate confidence intervals for parameters
+        \item Confint() in lme4() gives Likelihood CI profiles or bootstrapped CI
+        \item nlme() gives p-values which are likely \textbf{wrong}
+        \item lme4() does not give p-values
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
     \frametitle{Recap of Day 6}
+    \textbf{Today's content was using library(nlme) and library(lme4) to fit Linear Mixed Effects Models}
+    \vspace{0.5cm}
+    
     \begin{itemize}
-        \item Fitting Linear Mixed Effects Models using `lme4` and `nlme`
-        \item Extracting Random Effects parameters using `VarCorr`
-        \item Population-average and BLUP predictions
-        \item Confidence intervals for fixed and random effects
+        \item \textbf{Syntax} differences among two packages
+        \item Using \textbf{VarCorr} to extract Random Effects parameters
+        \item The various \textbf{Random Effects structures}
+        \item Predictions of population avarage with and without \textbf{RE uncertainty}
+        \item Predictions of \textbf{BLUPs}
+        \item Extracting the residual covariance matrix
     \end{itemize}
-    Afternoon exercises on fitting mixed effects models in R.
+    \vspace{0.5cm}
+    
+    Today afternoon: Exercises on fitting mixed effects models with nlme and lmer in R.
 \end{frame}
 
 \end{document}

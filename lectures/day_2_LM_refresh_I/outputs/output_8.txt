@@ -1,5 +1,0 @@
-lower.CI <- (-1) * var.confint * 1.96
-higher.CI <- var.confint * 1.96
-
-lower.Pred <- (-1) * var.predict * 1.96
-higher.Pred <- var.predict * 1.96
