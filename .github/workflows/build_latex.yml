@@ -21,7 +21,7 @@ jobs:
 
     - name: Compile LaTeX documents
       run: |
-        find ./lectures -name "*.tex" | while read file; do
+        find ./lectures/day_1_intro_to_mems -name "*.tex" | while read file; do
           pdflatex -interaction=nonstopmode -halt-on-error "$file"
           pdflatex -interaction=nonstopmode -halt-on-error "$file"  # Run twice for cross-references
         done
@@ -38,7 +38,7 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        find ./lectures -name "*.pdf" | while read pdf; do
+        find ./lectures/day_1_intro_to_mems -name "*.pdf" | while read pdf; do
           git add "$pdf"
         done
         git diff --quiet && git diff --staged --quiet || git commit -m "Auto-build PDFs from LaTeX"

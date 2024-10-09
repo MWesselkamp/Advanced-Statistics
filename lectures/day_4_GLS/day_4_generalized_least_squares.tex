@@ -690,34 +690,36 @@ Degrees of freedom: 361 total; 358 residual
 \begin{frame}[fragile]{Model Comparison: Likelihood Ratio Test}
   The fitted models look very similar - is there really a difference? Compare the likelihood ratios.
   \scriptsize
-  \begin{VerbatimIN}
+  \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 anova(bf, bf.1, bf.2) 
 # LRT test says that there is a difference between 
 # the AR1 and ARMA(2,2) model
   \end{VerbatimIN}
-  \begin{VerbatimOUT}
+  \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
      Model df      AIC      BIC    logLik   Test  L.Ratio p-value
 bf       1  4 6511.429 6526.951 -3251.715                        
 bf.1     2  5 6047.095 6066.498 -3018.548 1 vs 2 466.3339  <.0001
 bf.2     3  8 5988.589 6019.634 -2986.295 2 vs 3  64.5059  <.0001
   \end{VerbatimOUT}
-  \vspace{0.5cm}
+  \vspace{0.3cm}
   
-  \normalsize {Yes, there is.}
+  \normalsize\textbf{Yes, there is.}
 \end{frame}
 
 \begin{frame}[fragile]{ACF and PACF for ARMA(2,2)}
   \begin{columns}
       \begin{column}{0.5\textwidth}
-      \begin{verbatim}
+      \scriptsize
+      \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 acf(residuals(bf.2))
-      \end{verbatim}
+      \end{VerbatimIN}
       \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-28-1.png}
       \end{column}
       \begin{column}{0.5\textwidth}
-      \begin{verbatim}
+      \scriptsize
+      \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 pacf(residuals(bf.2))
-      \end{verbatim}
+      \end{VerbatimIN}
       \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-29-1.png}
       \end{column}
   \end{columns}
@@ -736,15 +738,39 @@ pacf(residuals(bf.2))
 
 \begin{frame}[fragile]{}
 \begin{columns}
-    \small
     \begin{column}{0.7\textwidth}
-      \begin{verbatim}
+    \tiny
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 model.1 <- gls(root ~ week * fertilizer, fertilizer)
 summary(model.1)
-      \end{verbatim}
-    \tiny\scalebox{0.9}{
-    \lstinputlisting[]{lectures/day_4_GLS/outputs/output_10.txt}
-  } 
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Generalized least squares fit by REML
+  Model: root ~ week * fertilizer 
+  Data: fertilizer 
+       AIC      BIC   logLik
+  123.3916 133.5184 -56.6958
+
+Coefficients:
+                            Value Std.Error   t-value p-value
+(Intercept)            -0.2223333 0.2433286 -0.913716  0.3648
+week                    0.9833333 0.0366832 26.806116  0.0000
+fertilizercontrol      -0.7576667 0.3441186 -2.201760  0.0318
+week:fertilizercontrol -0.0916667 0.0518778 -1.766972  0.0827
+
+ Correlation: 
+                       (Intr) week   frtlzr
+week                   -0.905              
+fertilizercontrol      -0.707  0.640       
+week:fertilizercontrol  0.640 -0.707 -0.905
+
+Standardized residuals:
+       Min         Q1        Med         Q3        Max 
+-2.0881239 -0.6498992 -0.2539769  0.6506324  2.6201262 
+
+Residual standard error: 0.5682932 
+Degrees of freedom: 60 total; 56 residual
+    \end{VerbatimOUT}
     \end{column}
     \begin{column}{0.3\textwidth}
     Again, first without any correlation due to plant:
