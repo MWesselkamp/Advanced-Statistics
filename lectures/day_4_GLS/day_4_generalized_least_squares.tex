@@ -575,57 +575,113 @@ Degrees of freedom: 361 total; 358 residual
 \begin{frame}[fragile]
 \frametitle{Fitting an AR(1) Model}
   \begin{columns}
-      \begin{column}{0.7\textwidth}
+      \begin{column}{0.63\textwidth}
       \tiny
-      \begin{VerbatimIN}
+      \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 bf.1 <- gls(flies ~ poly(week,2), blowfly, 
 correlation = corAR1(form = ~ week))
       \end{VerbatimIN}
-      \begin{}
+      \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Generalized least squares fit by REML
+  Model: flies ~ poly(week, 2) 
+  Data: blowfly 
+       AIC      BIC    logLik
+  6047.095 6066.498 -3018.548
+
+Correlation Structure: AR(1)
+ Formula: ~week 
+ Parameter estimate(s):
+      Phi 
+0.8629171 
+
+Coefficients:
+                   Value Std.Error  t-value p-value
+(Intercept)     3480.972   422.787 8.233390  0.0000
+poly(week, 2)1 22794.854  7743.601 2.943702  0.0035
+poly(week, 2)2  7061.578  7483.354 0.943638  0.3460
+ Correlation: 
+               (Intr) p(,2)1
+poly(week, 2)1  0.00        
+poly(week, 2)2 -0.07   0.00 
+Standardized residuals:
+       Min         Q1        Med         Q3        Max 
+-2.0481233 -0.7200236 -0.1827647  0.5127196  4.2649012 
+Residual standard error: 2211.358 
+Degrees of freedom: 361 total; 358 residual
+      \end{VerbatimOUT}
         
       \end{column}
-      \begin{column}{0.3\textwidth}
+      \begin{column}{0.37\textwidth}
       Using a simple lag-1 autocorrelation model of type AR1 by specifying the \textbf{correlation} argument:
       \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-21-1.png}
       \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Auto-Correlation Function (ACF) and Partial ACF}
+\begin{frame}[fragile]
+\frametitle{Auto-Correlation Function (ACF) and Partial ACF}
   A visual detection tool to detect (partial) auto-correlation of residuals.
 
   \begin{columns}
       \begin{column}{0.5\textwidth}
-        \begin{verbatim}
+      \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 acf(residuals(bf))
-        \end{verbatim}
+        \end{VerbatimIN}
         \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-22-1.png}  
       \end{column}
       \begin{column}{0.5\textwidth}
-        \begin{verbatim}
+      \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 pacf(residuals(bf))
-        \end{verbatim}
+        \end{VerbatimIN}
         \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-22-1.png}  
       \end{column}
   \end{columns}
-  \tiny Difference between acf and pacf: \color{blue}\href{https://stats.stackexchange.com/questions/483383/difference-between-autocorrelation-and-partial-autocorrelation}{here}
+  \footnotesize More on the difference between acf and pacf: \color{blue}\href{https://stats.stackexchange.com/questions/483383/difference-between-autocorrelation-and-partial-autocorrelation}{here}
 \end{frame}
 
 \begin{frame}[fragile]{Fitting an ARMA(2,2) Model}
   \begin{columns}
-      \begin{column}{0.7\textwidth}
-      \small
-      \begin{verbatim}
+      \begin{column}{0.63\textwidth}
+      \tiny
+      \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 bf.2 <- gls(flies ~ poly(week,2), blowfly, 
 correlation = corARMA(form = ~ week, p = 2, q = 2))
-      \end{verbatim}
-      \tiny\scalebox{0.9}{
-        \lstinputlisting[]{lectures/day_4_GLS/outputs/output_7.txt}
-      }        
+      \end{VerbatimIN}
+      \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Generalized least squares fit by REML
+  Model: flies ~ poly(week, 2) 
+  Data: blowfly 
+       AIC      BIC    logLik
+  5988.589 6019.634 -2986.295
+
+Correlation Structure: ARMA(2,2)
+ Formula: ~week 
+ Parameter estimate(s):
+      Phi1       Phi2     Theta1     Theta2 
+ 1.7924184 -0.8843568 -0.9623889  0.1482497 
+
+Coefficients:
+                   Value Std.Error  t-value p-value
+(Intercept)     3494.084  108.5511 32.18838   0e+00
+poly(week, 2)1 20966.794 2099.5792  9.98619   0e+00
+poly(week, 2)2  7708.031 2138.9106  3.60372   4e-04
+ Correlation: 
+               (Intr) p(,2)1
+poly(week, 2)1 0.000        
+poly(week, 2)2 0.039  0.000 
+Standardized residuals:
+       Min         Q1        Med         Q3        Max 
+-2.1218292 -0.7829881 -0.1702042  0.5484453  4.5443795 
+Residual standard error: 2094.233 
+Degrees of freedom: 361 total; 358 residual
+      \end{VerbatimOUT}
+ 
       \end{column}
-      \begin{column}{0.3\textwidth}
+      \begin{column}{0.37\textwidth}
       \newline
-      Using a complex moving average autoregressive model of type ARMA(2, 2):
+      Using a complex moving average autoregressive model of type ARMA(2,2):
       \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-26-1.png}
       \end{column}
   \end{columns}
@@ -633,14 +689,14 @@ correlation = corARMA(form = ~ week, p = 2, q = 2))
 
 \begin{frame}[fragile]{Model Comparison: Likelihood Ratio Test}
   The fitted models look very similar - is there really a difference? Compare the likelihood ratios.
-  \begin{verbatim}
+  \begin{VerbatimIN}
 anova(bf, bf.1, bf.2) 
 # LRT test says that there is a difference between 
 # the AR1 and ARMA(2,2) model
-  \end{verbatim}
-  \tiny\scalebox{1.2}{
-    \lstinputlisting[]{lectures/day_4_GLS/outputs/output_8.txt}
-  } 
+  \end{VerbatimIN}
+  \begin{VerbatimOUT}
+
+  \end{VerbatimOUT}
   \vspace{0.5cm}
   
   \normalsize Yes, there is.
