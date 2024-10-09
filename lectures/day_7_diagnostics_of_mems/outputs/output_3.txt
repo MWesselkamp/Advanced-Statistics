@@ -1,0 +1,31 @@
+Linear mixed model fit by REML ['lmerMod']
+Formula: root ~ week * fertilizer + (week | plant)
+   Data: fertilizer
+
+REML criterion at convergence: 104.3
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.6916 -0.7407 -0.1264  0.6904  2.2746 
+
+Random effects:
+ Groups   Name        Variance  Std.Dev. Corr
+ plant    (Intercept) 0.0306727 0.17514      
+          week        0.0007169 0.02677  1.00
+ Residual             0.2171683 0.46601      
+Number of obs: 60, groups:  plant, 12
+
+Fixed effects:
+                       Estimate Std. Error t value
+(Intercept)            -0.22233    0.21196  -1.049
+week                    0.98333    0.03201  30.724
+fertilizercontrol      -0.75767    0.29975  -2.528
+week:fertilizercontrol -0.09167    0.04526  -2.025
+
+Correlation of Fixed Effects:
+            (Intr) week   frtlzr
+week        -0.685              
+frtlzrcntrl -0.707  0.484       
+wk:frtlzrcn  0.484 -0.707 -0.685
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see ?isSingular

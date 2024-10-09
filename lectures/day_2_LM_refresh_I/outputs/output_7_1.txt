@@ -1,3 +1,0 @@
-beta.covar.matrix <- 
-as.numeric(res.variance) * solve(t(design.matrix) %*% design.matrix)
-XVX <- new.design.matrix %*% beta.covar.matrix %*% t(new.design.matrix)

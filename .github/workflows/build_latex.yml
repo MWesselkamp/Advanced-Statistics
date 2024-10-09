@@ -19,24 +19,27 @@ jobs:
     - name: Set up TeX Live
       run: sudo apt-get install texlive-latex-base texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra
 
-    - name: Compile LaTeX document
-      working-directory: ./lectures/day_1_intro_to_mems
+    - name: Compile LaTeX documents
       run: |
-        pdflatex -interaction=nonstopmode -halt-on-error intro_to_course.tex
-        pdflatex -interaction=nonstopmode -halt-on-error intro_to_course.tex  # Run twice for cross-references
+        find ./lectures -name "*.tex" | while read file; do
+          pdflatex -interaction=nonstopmode -halt-on-error "$file"
+          pdflatex -interaction=nonstopmode -halt-on-error "$file"  # Run twice for cross-references
+        done
 
-    - name: Upload PDF artifact
+    - name: Upload PDF artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: compiled-pdf
-        path: lectures/day_1_intro_to_mems/intro_to_course.pdf
+        name: compiled-pdfs
+        path: '**/*.pdf'  # Upload all PDFs generated in any subfolder
 
-    - name: Commit and push the PDF
+    - name: Commit and push the PDFs
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the PAT from the secrets
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add lectures/day_1_intro_to_mems/intro_to_course.pdf
-        git diff --quiet && git diff --staged --quiet || git commit -m "Auto-build PDF from LaTeX"
+        find ./lectures -name "*.pdf" | while read pdf; do
+          git add "$pdf"
+        done
+        git diff --quiet && git diff --staged --quiet || git commit -m "Auto-build PDFs from LaTeX"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main

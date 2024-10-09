@@ -1,0 +1,5 @@
+ Groups   Name        Std.Dev. Corr         
+ Genotype (Intercept) 11.544                
+          poly(P, 2)1 50.835    0.997       
+          poly(P, 2)2 26.338   -0.989 -0.974
+ Residual              2.455      

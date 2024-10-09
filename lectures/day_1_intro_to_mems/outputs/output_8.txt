@@ -1,1 +1,0 @@
-lmer(formula = response ~ 1 + (1 | group))

@@ -1,0 +1,29 @@
+Generalized least squares fit by REML
+  Model: flies ~ poly(week, 2) 
+  Data: blowfly 
+       AIC      BIC    logLik
+  5988.589 6019.634 -2986.295
+
+Correlation Structure: ARMA(2,2)
+ Formula: ~week 
+ Parameter estimate(s):
+      Phi1       Phi2     Theta1     Theta2 
+ 1.7924184 -0.8843568 -0.9623889  0.1482497 
+
+Coefficients:
+                   Value Std.Error  t-value p-value
+(Intercept)     3494.084  108.5511 32.18838   0e+00
+poly(week, 2)1 20966.794 2099.5792  9.98619   0e+00
+poly(week, 2)2  7708.031 2138.9106  3.60372   4e-04
+
+ Correlation: 
+               (Intr) p(,2)1
+poly(week, 2)1 0.000        
+poly(week, 2)2 0.039  0.000 
+
+Standardized residuals:
+       Min         Q1        Med         Q3        Max 
+-2.1218292 -0.7829881 -0.1702042  0.5484453  4.5443795 
+
+Residual standard error: 2094.233 
+Degrees of freedom: 361 total; 358 residual

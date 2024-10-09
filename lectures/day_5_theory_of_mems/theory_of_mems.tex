@@ -1,105 +1,315 @@
 \documentclass{beamer}
-\usepackage{amsmath}
-\usepackage{hyperref}
-\usepackage{xcolor}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
 
-\title{The Theory of Mixed Effects Models}
-\author{Marieke Wesselkamp}
-\institute{Department of Biometry and Environmental Systems Analysis \\
+\definecolor{darkred}{rgb}{0.75, 0, 0}
+\definecolor{orange}{rgb}{1, 0.65, 0}
+\definecolor{violet}{rgb}{0.58, 0, 0.83}
+\definecolor{darkgray}{rgb}{0.33, 0.33, 0.33}
+\definecolor{darkgreen}{rgb}{0.0, 0.5, 0.0}
+
+\title{Mixed Effects Models - Day 5}
+\subtitle{Theory of Mixed Effect Models}
+\author{Marieke Wesselkamp \\ Department of Biometry and Environmental Systems Analysis \\
 Albert-Ludwigs-University of Freiburg (Germany)}
-\date{\today}
+\date{February 2023}
 
 \begin{document}
 
 \frame{\titlepage}
 
-\begin{frame}
-\frametitle{Linear Effects Model}
-\begin{block}{Matrix Notation}
+
+% Slide 2: Linear Effects Model
+\begin{frame}{Linear Effects Model in general matrix notation}
 \[
 \mathbf{y} = \mathbf{X} \cdot \mathbf{b} + \mathbf{e}
 \]
 \[
-\mathbf{e} \sim \mathcal{N}(0,  \sigma^2_{\epsilon} \cdot \mathbf{I})
+\mathbf{e} \sim \mathcal{N}(0, \sigma^2_{\epsilon} \cdot \mathbf{I})
 \]
-\end{block}
+where:
 \begin{itemize}
-    \item $\mathbf{y}$: measured response values
-    \item $\mathbf{X}$: design matrix
-    \item $\mathbf{b}$: parameter vector
-    \item $\mathbf{e}$: vector of errors $\epsilon$
-    \item $\mathbf{e}$ is normally distributed with mean = 0 and variance = $\sigma^2_{\epsilon} \cdot \mathbf{I}$
+  \item $\mathbf{y}$: measured response values
+  \item $\mathbf{X}$: design matrix
+  \item $\mathbf{b}$: parameter vector
+  \item $\mathbf{e}$: error vector with $mean = 0$, $variance = \sigma^2_{\epsilon} \cdot \mathbf{I}$
 \end{itemize}
-\begin{block}{Note}
-From now on: $\sigma^2_{\epsilon} \cdot \mathbf{I} = \mathbf{R}$. \textit{Residual = R-side}
-\end{block}
+\vspace{0.5cm}
+
+From now on: $\sigma^2_{\epsilon} \cdot \mathbf{I} = \mathbf{R}$ (Residual = R-side).
 \end{frame}
 
-\begin{frame}
-\frametitle{Linear Mixed Effects Model}
-\begin{block}{Matrix Notation}
+% Slide 3: Linear Mixed Effects Model
+\begin{frame}{Linear Mixed Effects Model in general matrix notation}
 \[
 \mathbf{y} = \mathbf{X} \cdot \mathbf{b} + \mathbf{Z} \cdot \mathbf{u} + \mathbf{e}
 \]
 \[
-\mathbf{e} \sim \mathcal{N}(0, \mathbf{R}), \; \mathbf{u} \sim \mathcal{N}(0, \mathbf{G}), \; \mathbf{u} \; \bot \; \mathbf{e}
+\mathbf{e} \sim \mathcal{N}(0, \mathbf{R}), \quad \mathbf{u} \sim \mathcal{N}(0, \mathbf{G}), \quad \mathbf{u} \bot \mathbf{e}
 \]
-\end{block}
+where:
 \begin{itemize}
-    \item $\mathbf{y}$: measured response values
-    \item $\mathbf{X}$: Fixed Effects design matrix
-    \item $\mathbf{b}$: Fixed Effects parameter vector
-    \item $\mathbf{Z}$: Random Effects design matrix
-    \item $\mathbf{u}$: Random Effects parameters
-    \item $\mathbf{e}$: vector of errors $\epsilon$, normally distributed with mean = 0 and variance = $\mathbf{R}$
+  \item $\mathbf{X}$: Fixed Effects design matrix
+  \item $\mathbf{b}$: Fixed Effects parameter vector
+  \item $\mathbf{Z}$: Random Effects design matrix
+  \item $\mathbf{u}$: Random Effects parameter vector
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{What is New in Linear Mixed Effects Model}
-\begin{block}{Matrix Notation}
-\[
-\mathbf{y} = \mathbf{X} \cdot \mathbf{b} + \mathbf{Z} \cdot \mathbf{u} + \mathbf{e}
-\]
-\[
-\mathbf{e} \sim \mathcal{N}(0, \mathbf{R}), \; \mathbf{u} \sim \mathcal{N}(0, \mathbf{G}), \; \mathbf{u} \; \bot \; \mathbf{e}
-\]
-\end{block}
-\begin{itemize}
-    \item $\mathbf{Z}$: Random Effects design matrix
-    \item $\mathbf{u}$: Random Effects parameters, normally distributed with mean = 0 and variance = $\mathbf{G}$
-    \item $\mathbf{e}$: vector of errors $\epsilon$, normally distributed with mean = 0 and variance = $\mathbf{R}$
-\end{itemize}
+% Slide 4: R Code for Example
+\begin{frame}[fragile]{Example in R}
+\begin{lstlisting}[language=R]
+library(lme4)
+library(lattice)
+library(nlme)
+
+set.seed(2)
+n.group <- 4
+n.measure <- 2
+
+group.ID <- factor(rep(1:n.group, each = n.measure))
+predictor <- rep(c(0, 2), times = n.measure * 2) + runif(n.group * n.measure, 0, 3)
+
+response <- 
+  1 + rep(rnorm(n.group, mean = 0, sd = 1), each = n.measure) + 
+  rep(rep(rnorm(n.group, mean = 0, sd = 1), each = 2) * predictor) + 
+  rnorm(n.group * n.measure, mean = 0, sd = 1)
+
+rand.Slope.unique <- data.frame(group.ID, predictor, response)
+rand.Slope.unique[4, 3] <- rand.Slope.unique[4, 3] + 2
+\end{lstlisting}
 \end{frame}
 
-
-\begin{frame}
-\frametitle{Let's break it down}
-
-The Response Vector $\mathbf{y}$
+% Slide 5: Matrix Representation of Response
+\begin{frame}{The Response Vector}
 \[
-\scriptsize{
-\mathbf{y} = \left( \begin{array}{c}
-\color{red}{y_1} \\
-\color{red}{y_2} \\
-\color{orange}{y_3} \\
-\color{orange}{y_4} \\
-\color{violet}{y_5} \\
-\color{violet}{y_6} \\
-\color{darkgray}{y_7} \\
+\mathbf{y} = \left( 
+\begin{array}{c} 
+\color{darkred}{y_1} \\ 
+\color{darkred}{y_2} \\ 
+\color{orange}{y_3} \\ 
+\color{orange}{y_4} \\ 
+\color{violet}{y_5} \\ 
+\color{violet}{y_6} \\ 
+\color{darkgray}{y_7} \\ 
 \color{darkgray}{y_8} 
-\end{array}\right) = \left( \begin{array}{c}
-\color{red}{1.63} \\
-\color{red}{8.03} \\
-\color{orange}{2.68} \\
-\color{orange}{0.47} \\
-\color{violet}{3.77}  \\
-\color{violet}{3.76} \\
-\color{darkgray}{2.15} \\
+\end{array}\right) = \left( 
+\begin{array}{c} 
+\color{darkred}{1.63} \\ 
+\color{darkred}{8.03} \\ 
+\color{orange}{2.68} \\ 
+\color{orange}{0.47} \\ 
+\color{violet}{3.77} \\ 
+\color{violet}{3.76} \\ 
+\color{darkgray}{2.15} \\ 
 \color{darkgray}{5.61} 
 \end{array}\right)
-}
 \]
+\end{frame}
+
+% Slide 6: Fixed Effects Design Matrix
+\begin{frame}{Fixed Effects Design Matrix}
+\[
+\mathbf{X} = \left( 
+\begin{array}{cc} 
+\color{darkred}{1} & \color{darkred}{0.56} \\ 
+\color{darkred}{1} & \color{darkred}{4.11} \\ 
+\color{orange}{1} & \color{orange}{1.72} \\ 
+\color{orange}{1} & \color{orange}{2.51} \\ 
+\color{violet}{1} & \color{violet}{2.83} \\ 
+\color{violet}{1} & \color{violet}{4.83} \\ 
+\color{darkgray}{1} & \color{darkgray}{0.39} \\ 
+\color{darkgray}{1} & \color{darkgray}{4.5} 
+\end{array}\right)
+\]
+\end{frame}
+
+% Slide 7: Random Effects Design Matrix
+\begin{frame}{Random Effects Design Matrix}
+\[
+\mathbf{Z} = \left( 
+\begin{array}{cccc} 
+\color{darkred}{1} & 0 & 0 & 0 \\ 
+\color{darkred}{1} & 0 & 0 & 0 \\ 
+0 & \color{orange}{1} & 0 & 0 \\ 
+0 & \color{orange}{1} & 0 & 0 \\ 
+0 & 0 & \color{violet}{1} & 0 \\ 
+0 & 0 & \color{violet}{1} & 0 \\ 
+0 & 0 & 0 & \color{darkgray}{1} \\ 
+0 & 0 & 0 & \color{darkgray}{1} 
+\end{array}\right)
+\]
+\end{frame}
+
+% Slide 8: Random Effects Parameter Vector
+\begin{frame}{Random Effects Parameter Vector}
+\[
+\mathbf{u} = \left( 
+\begin{array}{c} 
+\color{darkred}{u_1} \\ 
+\color{orange}{u_2} \\ 
+\color{violet}{u_3} \\ 
+\color{darkgray}{u_4} 
+\end{array}\right) = \left( 
+\begin{array}{c} 
+\color{darkred}{0.24} \\ 
+\color{orange}{-0.20} \\ 
+\color{violet}{-0.12} \\ 
+\color{darkgray}{0.09} 
+\end{array}\right)
+\]
+\end{frame}
+
+% Slide 9: Plot the Results
+\begin{frame}[fragile]{Plot Results in R}
+\begin{lstlisting}[language=R]
+plot(rand.Slope.unique$predictor, rand.Slope.unique$response, 
+     xlab = "Predictor", ylab = "Response", 
+     pch = 21, bg = "darkgreen", cex = 2)
+\end{lstlisting}
+\end{frame}
+
+% Additional slides for the theory, residuals, variance-covariance matrices, etc., would follow a similar format
+
+% Slide 10: Error Vector
+\begin{frame}{Error Vector $\epsilon$}
+\[
+\mathbf{e} = \left( 
+\begin{array}{c} 
+\color{darkred}{\epsilon_1} \\ 
+\color{darkred}{\epsilon_2} \\ 
+\color{orange}{\epsilon_3} \\ 
+\color{orange}{\epsilon_4} \\ 
+\color{violet}{\epsilon_5} \\ 
+\color{violet}{\epsilon_6} \\ 
+\color{darkgray}{\epsilon_7} \\ 
+\color{darkgray}{\epsilon_8} 
+\end{array}\right) = \left( 
+\begin{array}{c} 
+\color{darkred}{-0.12} \\ 
+\color{darkred}{2.93} \\ 
+\color{orange}{0.27} \\ 
+\color{orange}{-2.67} \\ 
+\color{violet}{0.23} \\ 
+\color{violet}{-1.67} \\ 
+\color{darkgray}{0.72} \\ 
+\color{darkgray}{0.30} 
+\end{array}\right)
+\]
+\end{frame}
+
+% Slide 11: Two Stochastic Parts
+\begin{frame}{Two Stochastic Parts in Mixed Models}
+A Mixed Effects Model has two stochastic parts:
+\begin{enumerate}
+  \item $\mathbf{u} \sim \mathcal{N}(0, \mathbf{G})$ describing how the random effects $\mathbf{u}$ vary around $0$ with variance-covariance matrix $\mathbf{G}$.
+  \item $\mathbf{e} \sim \mathcal{N}(0, \mathbf{R})$ describes how the residuals vary after accounting for fixed and random effects.
+\end{enumerate}
+\end{frame}
+
+% Slide 12: Random Intercept Model Variance
+\begin{frame}{Random Intercept Model Variance}
+In the simplest case of a Random Intercept Model, $\mathbf{G}$ has only one value for the variance of random intercepts among groups:
+\[
+\mathbf{G} = \left( d^2 \right) = 0.29
+\]
+\end{frame}
+
+% Slide 13: Combined Variance-Covariance Matrix $\mathbf{V}$
+\begin{frame}{Combined Variance-Covariance Matrix $\mathbf{V}$}
+The combined variance-covariance matrix $\mathbf{V}$ is:
+\[
+\mathbf{V} = \mathbf{Z} \cdot \mathbf{G} \cdot \mathbf{Z}^T + \mathbf{R}
+\]
+If $\mathbf{G} = 0$, we are back to the Linear Model.
+\end{frame}
+
+% Slide 14: Example of $\mathbf{V}$ Matrix
+\begin{frame}{Example of $\mathbf{V}$ Matrix}
+For two groups, the $\mathbf{V}$ matrix is:
+\[
+\mathbf{V} = \left( 
+\begin{array}{cc} 
+\sigma^2 + d^2 & d^2 \\ 
+d^2 & \sigma^2 + d^2 
+\end{array} \right)
+\]
+$d^2$ represents the covariance of two values in the same group.
+\end{frame}
+
+% Slide 15: Summary of Assumptions of LMM
+\begin{frame}{Assumptions of Linear Mixed Models}
+\[
+\mathbf{y} = \mathbf{X} \cdot \mathbf{b} + \mathbf{Z} \cdot \mathbf{u} + \mathbf{e}
+\]
+\[
+\mathbf{e} \sim \mathcal{N}(0, \mathbf{R}), \quad \mathbf{u} \sim \mathcal{N}(0, \mathbf{G}), \quad \mathbf{u} \bot \mathbf{e}
+\]
+Key assumptions:
+\begin{itemize}
+  \item $\mathbf{b}$ describes the deterministic trend.
+  \item $\mathbf{u}$ are normally distributed with mean 0, variance $\mathbf{G}$.
+  \item Residual errors $\mathbf{e}$ are independent within a group with variance $\mathbf{R}$.
+\end{itemize}
+\end{frame}
+
+% Slide 16: Nested vs Crossed Random Effects
+\begin{frame}{Nested vs Crossed Random Effects}
+When you have two or more random effects in a dataset:
+\begin{itemize}
+  \item **Nested Random Effects**: Each level of a lower grouping factor is nested within a level of a higher grouping factor.
+  \item **Crossed Random Effects**: Random effects are not nested, each level of a grouping factor appears across levels of another factor.
+\end{itemize}
+\end{frame}
+
+% Slide 17: REML Estimation
+\begin{frame}{REML Estimation}
+Restricted Maximum Likelihood (REML) is used in Mixed Models to estimate variance components in an unbiased way. REML is preferred when:
+\begin{itemize}
+  \item Comparing models that differ in their random effects structure.
+  \item It adjusts for the fixed effects and focuses on variance components.
+\end{itemize}
+\end{frame}
+
+% Slide 18: Best Linear Unbiased Predictors (BLUPs)
+\begin{frame}{Best Linear Unbiased Predictors (BLUPs)}
+Random effects $\mathbf{u}$ are calculated as:
+\[
+\mathbf{u} = \mathbf{G} \cdot \mathbf{Z}^T \mathbf{V}^{-1} (\mathbf{y} - \mathbf{X} \cdot \mathbf{b})
+\]
+BLUPs are:
+\begin{itemize}
+  \item Linear combinations of fixed and random effects.
+  \item Unbiased estimates of group-specific trends.
+\end{itemize}
+\end{frame}
+
+% Slide 19: Shrinkage in Partial Pooling
+\begin{frame}{Shrinkage in Partial Pooling}
+Mixed effects models use partial pooling to shrink parameter estimates towards the population average. This reduces variance and improves generalization.
+\end{frame}
+
+% Slide 20: Recapitulation of Day 5
+\begin{frame}{Recapitulation - Day 5}
+By the end of today, you should understand:
+\begin{itemize}
+  \item How a Mixed Effects Model is expressed in matrix notation.
+  \item The stochastic part matrices in Linear Mixed Models.
+  \item The difference between Random Intercept and Random Slope models.
+\end{itemize}
+\end{frame}
+
+% Slide 21: Recapitulation of Day 6
+\begin{frame}{Recapitulation - Day 6}
+After the next session, you will understand:
+\begin{itemize}
+  \item Nested and Crossed Random Effects.
+  \item How to obtain unbiased REML estimates.
+  \item The concepts of shrinkage and BLUPs.
+\end{itemize}
+Have a nice weekend!
 \end{frame}
 
 \end{document}

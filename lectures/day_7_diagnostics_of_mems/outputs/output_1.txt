@@ -1,0 +1,24 @@
+Linear mixed model fit by REML ['lmerMod']
+Formula: Glycogen ~ Treatment + (1|Rat/Liver)
+   Data: rats
+
+REML criterion at convergence: 227.1
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-1.91171 -0.71277 -0.03182  0.71589  2.52546 
+
+Random effects:
+ Groups    Name        Variance  Std.Dev. 
+ Liver:Rat (Intercept) 1.146e-07 0.0003385
+ Rat       (Intercept) 2.061e+01 4.5395756
+ Residual              4.248e+01 6.5173452
+Number of obs: 36, groups:  Liver:Rat, 6; Rat, 2
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  140.500      3.721  37.762
+Treatment2    10.500      2.661   3.946
+Treatment3    -5.333      2.661  -2.004
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see ?isSingular

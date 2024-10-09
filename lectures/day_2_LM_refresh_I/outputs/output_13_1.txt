@@ -1,3 +1,0 @@
-mod <- 
-lm(response ~ treat, 
-data = example_2)

@@ -1,0 +1,8 @@
+            Variance    StdDev    Corr  
+Subject =   pdDiag(Sex)                 
+(Intercept) 1.60666457  1.2675427       
+SexFemale   0.89043771  0.9436301       
+Subject =   pdSymm(age)                 
+(Intercept) 4.09538269  2.0237052 (Intr)
+age         0.03252448  0.1803454 -0.829
+Residual    1.71620369  1.3100396      

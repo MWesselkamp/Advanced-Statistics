@@ -1,1 +1,0 @@
-predict.vector <- new.design.matrix %*% beta.vector

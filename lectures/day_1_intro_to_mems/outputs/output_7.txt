@@ -1,1 +1,0 @@
-lmer(formula = response ~ treatment + (1 | group))

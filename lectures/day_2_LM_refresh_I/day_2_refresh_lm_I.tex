@@ -3,6 +3,27 @@
 \usepackage{amsmath}
 \usepackage{subfig}
 \usepackage{listings}
+\usepackage{tcolorbox,fancyvrb,xcolor,tikz}
+\tcbuselibrary{skins,breakable}
+
+\newenvironment{VerbatimIN}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    colback=lightgray,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
+
+ \newenvironment{VerbatimOUT}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
 
 % Set theme and colors
 \usecolortheme{default}
@@ -16,7 +37,7 @@
 \title{Mixed Effects Models - Day 2}
 \subtitle{Refreshing Linear Models I}
 \author{Marieke Wesselkamp \\ Department of Biometry and Environmental Systems Analysis \\ Albert-Ludwigs-University of Freiburg (Germany)}
-\date{February 2023}
+\date{\today}
 
 \begin{document}
 
@@ -153,10 +174,11 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{}
+    \frametitle{The four assumptions of the Linear Model}
     $y = \beta_0 + \beta_1 \cdot x + \epsilon$, $\epsilon_{iid} \sim \mathcal{N}(0, \sigma^2_{\epsilon})$ \\
     \vspace{0.5cm}
-    \textbf{The four assumptions of the Linear Model:}
+    \pause
+    
     \begin{itemize}
         \item \textbf{Normality:} $y$ is normally distributed at any value of $x$, implying residuals are normally distributed.
         \item \textbf{Homogeneity:} The variance of the residuals is the same at any value of $x$.
@@ -288,16 +310,51 @@
     \end{equation*}
 \end{frame}
 
-\begin{frame}{In R}
-    \scalebox{0.75}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_1.txt}
-      }
+\begin{frame}[fragile]
+\frametitle{In R}
+\scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+design.matrix <- 
+as.matrix(data.frame(Intercept = rep(1,5), x))
+
+design.matrix
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+     Intercept        x
+[1,]         1 1.273587
+[2,]         1 1.468522
+[3,]         1 2.461191
+[4,]         1 2.936119
+[5,]         1 3.604828
+    \end{VerbatimOUT}
 \end{frame}
 
-\begin{frame}{In R}
-    \scalebox{0.7}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_2.txt}
-      }    
+\begin{frame}[fragile]
+\frametitle{In R}
+\scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+beta.vector <- solve(t(design.matrix) %*% design.matrix) 
+%*% t(design.matrix) %*% y 
+#'solve' inverts a matrix in R
+beta.vector
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+               [,1]
+Intercept -1.440290
+x          3.266068
+    \end{VerbatimOUT}
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+n = 5; p = 1 
+# n = sample size
+# p = residual degrees of freedom = number of parameters - 1
+res.variance <- (1/(n-p-1)) * t(y - design.matrix %*% beta.vector) 
+%*% (y - design.matrix %*% beta.vector)
+res.variance
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+         [,1]
+[1,] 1.516601
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}
@@ -368,10 +425,25 @@
     \end{equation*}
 \end{frame}
 
-\begin{frame}{In R this can be done as}
-    \scalebox{0.8}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_3.txt}
-      }    
+\begin{frame}[fragile]
+\frametitle{In R this can be done as}
+\scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+vcov(lm(y ~ x)) 
+# diagonals = variances, off-diagonals = co-variances
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+            (Intercept)          x
+(Intercept)   2.4675458 -0.9213982
+x            -0.9213982  0.3922764
+    \end{VerbatimOUT}
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+sqrt(diag(vcov(lm(y~ x))))
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+(Intercept)           x 
+  1.5708424   0.6263197 
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}
@@ -458,37 +530,52 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{}
-    \textbf{In Mixed Effects Models, other optimisation procedures are used to get parameters and standard errors, which are derivative-based or derivative-free algorithms.}\\
+    \textbf{In Mixed Effects Models, other optimisation procedures are used to get parameters and standard errors, which are derivative-based or derivative-free algorithms.}
     \vspace{0.5cm}
+    
     Example: Quasi-Newton method (method = c("BFGS")):
     \vspace{0.5cm}
-    \scalebox{0.7}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_4.txt}
-    }    
+
+    \scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+optimised <- 
+optim(par = c(beta_0 = -1.0, beta_1 = 3.0), fn = llfun,
+method = c("BFGS"),  control = list(fnscale = -1), hessian = TRUE)
+    \end{VerbatimIN}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{}
     \textbf{With only five data points, optimisers work rather poorly:}
     
     Remember the optimal values for $\beta_0 = -1.44$ and $\beta_1 = 3.27$ that we calculated analytically.
-    \vspace{0.5cm}
+    \vspace{0.2cm}
     
-    \scalebox{0.7}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_5_1.txt}
-    }
+    \scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+optimised$par
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+   beta_0    beta_1 
+-1.715189  3.485194 
+    \end{VerbatimOUT}
     \vspace{0.5cm}
-    
+
+    \normalsize
     To compute standard errors of the estimates, extract the second derivatives from the hessian matrix.
-    \vspace{0.5cm}
-    
-    \scalebox{0.7}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_5_2.txt}
-    }
-    \vspace{0.5cm}
-    
+    \vspace{0.2cm}
+
+    \scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+sqrt(diag(solve(-optimised$hessian)))
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+  beta_0   beta_1 
+3.690630 1.425256 
+    \end{VerbatimOUT}
+
     \tiny{\url{https://stats.stackexchange.com/questions/68080/basic-question-about-fisher-information-matrix-and-relationship-to-hessian-and-s?rq=1}}
     
 \end{frame}
@@ -518,89 +605,128 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Predictions in Matrix Notation}
     \begin{equation*}
         \hat{y} = \mathbf{X \hat{\beta}}
     \end{equation*}
-    In R:
+    \textbf{In R:}
     \vspace{0.5cm}
     
     1) New data to the new design matrix X
-    \scalebox{0.65}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_6_1.txt}
-    }
-    \vspace{0.5cm}
-    
+    \scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+new.design.matrix <- 
+as.matrix(data.frame(Intercept = rep(1,100), 
+          x = seq(0, 5, length = 100)))
+    \end{VerbatimIN}
+    \vspace{0.3cm}
+
+    \normalsize
     2) Matrix-multiply X by the parameter vector $\hat\beta$ to get the predictions
-    
-    \scalebox{0.65}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_6_2.txt}
-    }
+    \scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+predict.vector <- new.design.matrix %*% beta.vector
+    \end{VerbatimIN}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Estimate the Standard Errors}
     Estimate the standard errors using the parameter variance-covariance matrix:
     \begin{equation*}
         \mathbf{V} = cov(\mathbf{\hat{\beta}})=\sigma^2 (\mathbf{X}' \mathbf{X})^{-1}
     \end{equation*}
-    In R:
-    \vspace{0.5cm}
+    \textbf{In R:}
+    \vspace{0.2cm}
 
     3) Compute first the variance-covariance matrix \textbf{V} and then the prediction variances \textbf{XVX'} with the new design matrix
 
-    \scalebox{0.65}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_7_1.txt}
-    }
-    \vspace{0.5cm}
-    
+    \tiny
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+beta.covar.matrix <- 
+as.numeric(res.variance) * solve(t(design.matrix) %*% design.matrix)
+XVX <- new.design.matrix %*% beta.covar.matrix %*% t(new.design.matrix)
+    \end{VerbatimIN}
+
+    \normalsize
     4) Extract the diagonal of this matrix and take the square root. If computing prediction rather than confidence intervals, add the residual variance $\sigma^2$.
 
-    \scalebox{0.7}{
-      \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_7_2.txt}
-    }
+    \tiny
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+var.confint <- sqrt(diag(XVX))
+var.predict <- sqrt(diag(XVX) + res.variance)
+    \end{VerbatimIN}
 
     
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{}
     \begin{columns}
         \begin{column}{0.5\textwidth}
-        5) Compute the 95\% confidence intervals based on a Normal approximation: $SE \cdot 1.96$   
-        \scalebox{0.7}{
-            \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_8.txt}
-        }
+        5) Compute the 95\% confidence intervals based on a Normal approximation: $SE \cdot 1.96$  
+        \tiny
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+lower.CI <- (-1) * var.confint * 1.96
+higher.CI <- var.confint * 1.96
+
+lower.Pred <- (-1) * var.predict * 1.96
+higher.Pred <- var.predict * 1.96
+        \end{VerbatimIN}
         \end{column}
         \begin{column}{0.5\textwidth}
         \includegraphics[width=\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-35-1.png}    
         \end{column}
     \end{columns}
-
-
-    
-    
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{}
-    \textbf{All that is built in R for Linear Models:}
-    
+    \textbf{All that is built in R for Linear Models:}\\ 
     Fit model with Maximum Likelihood, extract ML estimates, and more.
+    \tiny
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+linear.model <- lm(y ~ x)
+summary(linear.model, correlation = TRUE)
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+Call:
+lm(formula = y ~ x)
 
-    \scalebox{0.6}{
-        \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_9.txt}
-    }
+Residuals:
+      1       2       3       4       5 
+-0.6903  0.9505  0.5261 -1.5298  0.7435 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept)  -1.4403     1.5708  -0.917   0.4268  
+x             3.2661     0.6263   5.215   0.0137 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.232 on 3 degrees of freedom
+Multiple R-squared:  0.9006,    Adjusted R-squared:  0.8675 
+F-statistic: 27.19 on 1 and 3 DF,  p-value: 0.01371
+
+Correlation of Coefficients:
+  (Intercept)
+x -0.94      
+    \end{VerbatimOUT}
     
 \end{frame}
 
-\begin{frame}
-    \centering\includegraphics[width=0.6\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-35-1.png}            
-        
-    \scalebox{0.7}{
-        \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_10.txt}
-    }    
+\begin{frame}[fragile]
+    \centering\includegraphics[width=0.5\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-35-1.png}  
+    \scriptsize
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+newdata <- data.frame(x = seq(0, 5, length = 100))
+predictions <- predict(linear.model, newdata, se = TRUE)
+# The dashed lines for the confidence interval were added with this:
+# lines(seq(0, 5, length = 100), 
+# predictions$fit + 1.96 * predictions$se.fit, lwd = 2, lty = 2)
+# lines(seq(0, 5, length = 100), 
+# predictions$fit - 1.96 * predictions$se.fit, lwd = 2, lty = 2)
+    \end{VerbatimIN}
     
 \end{frame}
 
@@ -611,18 +737,20 @@
     \end{center}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{}
     \textbf{Before we trust the model output, we have to check whether the model assumptions are met.}
 
     \begin{columns}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.6\textwidth}
         \includegraphics[width=\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-40-1.png}     
         \end{column}
-        \begin{column}{0.5\textwidth}
-        \scalebox{0.7}{
-            \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_11.txt}
-        }     
+        \begin{column}{0.4\textwidth}
+        \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+par(mfrow = c(2, 2))
+plot(linear.model)
+        \end{VerbatimIN}  
         \end{column}
     \end{columns}
 
@@ -660,12 +788,20 @@
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{The Fab Four}
-        \centering\includegraphics[width=0.7\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-40-1.png} 
-        \centering\scalebox{0.75}{
-            \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_12.txt}
-        }
+        \begin{columns}
+        \begin{column}{0.6\textwidth}
+        \includegraphics[width=\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-40-1.png}     
+        \end{column}
+        \begin{column}{0.4\textwidth}
+        \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+par(mfrow = c(2, 2))
+plot(linear.model)
+        \end{VerbatimIN}  
+        \end{column}
+        \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -691,21 +827,27 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
     \frametitle{Residuals with and without the information on grouping}
 
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-47-1.png}
-            \scalebox{0.75}{
-                \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_13_1.txt}
-            }
+            \scriptsize
+            \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+mod <- 
+lm(response ~ treat, 
+data = example_2)
+            \end{VerbatimIN}
         \end{column}
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_2_LM_refresh_I/figures/unnamed-chunk-49-1.png}
-            \scalebox{0.75}{
-                \lstinputlisting[]{lectures/day_2_LM_refresh_I/outputs/output_13_2.txt}
-            }
+            \scriptsize
+            \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+mod <- 
+lm(response ~ treat + group, 
+data = example_2)
+            \end{VerbatimIN}
         \end{column}
     \end{columns}
     
