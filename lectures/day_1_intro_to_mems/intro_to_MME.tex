@@ -11,6 +11,8 @@
 \usepackage{tcolorbox,xcolor,tikz}
 \tcbuselibrary{skins, breakable}
 
+\setbeamertemplate{footline}[frame number]
+
 \renewcommand{\topfraction}{0.9}
 
 \newenvironment{VerbatimIN}
@@ -43,23 +45,31 @@
   \titlepage
 \end{frame}
 
-\begin{frame}{Quote}
+\begin{frame}{Why not begin with a quote?}
   \begin{center}
-    \includegraphics[width=0.4\textwidth]{lectures/day_1_intro_to_mems/figures/mcelreath2020.jpg}
+    \includegraphics[width=0.2\textwidth]{lectures/day_1_intro_to_mems/figures/mcelreath2020.jpg}
     \\
     \bigskip
-    \textit{"Rather start with a multilevel analysis and then realize it's unnecessary, than to overlook it."}
+    \textit{"Rather start with a multilevel analysis and then realize it's unnecessary, than to overlook it." - Richard McElreath, Statstical Rethinking}\footnote{Check his lectures: https://github.com/rmcelreath}
   \end{center}
 \end{frame}
 
 \begin{frame}{Soil Respiration Data}
-  As ecologists, you might encounter this type of data:
 
-\begin{figure}
+As ecologists, you might encounter this type of data:
+\begin{center}
+  \begin{minipage}{0.45\linewidth}
     \centering
-    \includegraphics[width=0.5\linewidth]{lectures/day_1_intro_to_mems/figures/plot_1.png}
-    \caption{Comparison of the soil respiration rate of two treatments, i.e. two forest stands with different vegetation composition. Source: Chair of Ecosystemphysiology Uni Freiburg}
-\end{figure}
+    \includegraphics[width=\linewidth]{lectures/day_1_intro_to_mems/figures/plot_1.png}
+  \end{minipage}
+  \hspace{0.05\linewidth}  % Adjust the space between the images
+  \begin{minipage}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{lectures/day_1_intro_to_mems/figures/respiration.jpeg}
+  \end{minipage}
+\end{center}
+
+Comparison of the soil respiration rate of two treatments, i.e. two forest stands with different vegetation composition. \footnote{Source: Chair of Ecosystemphysiology Uni Freiburg.}
 
 \end{frame}
 
@@ -70,9 +80,18 @@
     \item Each measurement lasted at least 120 seconds
   \end{itemize}
 
-  \begin{center}
-    \includegraphics[width=0.7\textwidth]{lectures/day_1_intro_to_mems/figures/respiration.jpeg}
-  \end{center}
+\begin{center}
+  \begin{minipage}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{lectures/day_1_intro_to_mems/figures/plot_1.png}
+  \end{minipage}
+  \hspace{0.05\linewidth}  % Adjust the space between the images
+  \begin{minipage}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{lectures/day_1_intro_to_mems/figures/respiration.jpeg}
+  \end{minipage}
+\end{center}
+
 
 \textbf{Hypothesis:} Higher soil respiration rate at the AQC stand.
 \end{frame}
@@ -131,7 +150,6 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
   \end{columns}
   \tiny
   \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
-Data: example_2
 Models:
 mod.2b: response ~ 1 + (1 | group)
 mod.2a: response ~ treat + (1 | group)
@@ -285,7 +303,7 @@ boundary (singular) fit: see ?isSingular
   \scriptsize
   \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
 Call:
-lm(formula = y2 ~ x1 + x2, data = example_1)
+lm(formula = y2 ~ x1 + subject, data = example_1)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
@@ -295,7 +313,7 @@ Coefficients:
              Estimate Std. Error t value Pr(>|t|)    
 (Intercept) 502.08553    1.85555  270.59   <2e-16 ***
 x1           10.19269    0.15245   66.86   <2e-16 ***
-x2           -6.07642    0.06425  -94.58   <2e-16 ***
+subject      -6.07642    0.06425  -94.58   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -424,7 +442,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.4\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-22-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-23-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -444,7 +462,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.46\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-23-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-24-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -459,7 +477,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.46\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-24-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-25-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -475,7 +493,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05
     \hspace{0.02\textwidth} % add small horizontal space
     \begin{column}{0.46\textwidth}
       \begin{center}
-        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-25-1.png}
+        \includegraphics[width=0.999\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-26-1.png}
       \end{center}
     \end{column}
   \end{columns}
@@ -577,7 +595,7 @@ lmer(formula = response ~ 1 + (1 | group))          # RIGHT
   \textbf{with} treatment \\
   \begin{itemize}
       \item $\text{variance}_{\text{among}} = 1.463$
-      \item $\text{variance}_{\text{among}} = 0.766$ 
+      \item $\text{variance}_{\text{within}} = 0.766$ 
       \item ICC =  0.656
   \end{itemize}
 
@@ -587,7 +605,7 @@ lmer(formula = response ~ 1 + (1 | group))          # RIGHT
     \textbf{without} treatment
     \begin{itemize}
       \item $\text{variance}_{\text{among}} = 7.196$
-      \item $\text{variance}_{\text{among}} = 0.766$ 
+      \item $\text{variance}_{\text{within}} = 0.766$ 
       \item ICC =   0.904
   \end{itemize}
     \end{column}
@@ -722,14 +740,6 @@ for "subject"
     
  \end{frame}
 
-
-\begin{frame}
-  \frametitle{}
-  \begin{center}
-    \huge\textbf{\textcolor{purple}{Break!}}
-  \end{center}
-\end{frame}
-
 \begin{frame}{What are Grouped Data?}
   \begin{itemize}
     \item \textbf{Temporal}: repeated measurements of the same unit over time, e.g., monthly counts of animals in a population or measurements over a fish's lifespan.
@@ -773,12 +783,16 @@ for "subject"
     \item There can be several grouping variables of different forms and a hierarchy with multiple levels. 
   \end{itemize}
   \begin{center}
-    \includegraphics[width=0.5\textwidth]{lectures/day_1_intro_to_mems/figures/counts.png} % Replace with your figure path
+    \includegraphics[width=0.5\textwidth]{lectures/day_1_intro_to_mems/figures/unnamed-chunk-40-1.png} % Replace with your figure path
   \end{center}
       e.g. beetle counts measured over time in 5 single plots (each line a plot) in four different regions (each panel a region). Grouping occurs within plot (over years) but also within a region (over plots). Plot is nested within region. 
 \end{frame}
 
-
+\begin{frame}{The origin of grouping}
+  \begin{itemize}
+    \item Grouping variables are mostly not predictors, but caused by the design of the experiment.
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{Design of Experiments: Randomised Blocked}
   \begin{itemize}
@@ -815,7 +829,7 @@ for "subject"
 
 \begin{frame}{Random vs. Fixed Effects}
 
-some PRACTICAL guidelines of what is Fixed and what is Random (after M. Crawley: The R-Book)
+Practical guidelines of what is Fixed and what is Random \footnote{After M. Crawley: The R-Book)}
 
   \begin{itemize}
     \item Am I interested in the effect sizes? Yes = Fixed
@@ -873,14 +887,14 @@ BOOKS
 \end{frame}
 
 \begin{frame}{Recapitulation Day 1}
-After today you should know and understand what the \textbf{bold} terms and concepts mean
+After today you should know and understand
   \begin{itemize}
     \item Mixed Effects Models contain \textbf{fixed} and \textbf{random} effects.
     \item Mixed Effects Models are statistical tools to analyze \textbf{grouped data} of various forms.
     \item They account for (1) \textbf{non-independence, pseudo-replication, and correlation} of data points...
     \item ... and can do much more: (2) capture effects of \textbf{missing} information, (3) quantify \textbf{among-group} and \textbf{within-group} variances, and estimate \textbf{group-level} parameters.
   \end{itemize}
-  Today Exercise: reading, discussion, exercises on Random Effects
+  Todays Exercise: Setting up your Github account for and practicing interaction with the classroom. Reading, discussion, exercises on Random Effects.
   
 \end{frame}
 

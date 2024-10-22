@@ -3,6 +3,27 @@
 \usepackage{graphicx}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{tcolorbox,fancyvrb,xcolor,tikz}
+\tcbuselibrary{skins,breakable}
+
+\newenvironment{VerbatimIN}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    colback=lightgray,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
+
+ \newenvironment{VerbatimOUT}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
 
 \definecolor{darkred}{rgb}{0.75, 0, 0}
 \definecolor{orange}{rgb}{1, 0.65, 0}
@@ -83,30 +104,43 @@ rand.Slope.unique[4, 3] <- rand.Slope.unique[4, 3] + 2
 \end{frame}
 
 % Slide 5: Matrix Representation of Response
-\begin{frame}{The Response Vector}
-\[
-\mathbf{y} = \left( 
-\begin{array}{c} 
-\color{darkred}{y_1} \\ 
-\color{darkred}{y_2} \\ 
-\color{orange}{y_3} \\ 
-\color{orange}{y_4} \\ 
-\color{violet}{y_5} \\ 
-\color{violet}{y_6} \\ 
-\color{darkgray}{y_7} \\ 
-\color{darkgray}{y_8} 
-\end{array}\right) = \left( 
-\begin{array}{c} 
-\color{darkred}{1.63} \\ 
-\color{darkred}{8.03} \\ 
-\color{orange}{2.68} \\ 
-\color{orange}{0.47} \\ 
-\color{violet}{3.77} \\ 
-\color{violet}{3.76} \\ 
-\color{darkgray}{2.15} \\ 
-\color{darkgray}{5.61} 
-\end{array}\right)
-\]
+\begin{frame}[fragile]
+\frametitle{Let's break it down}
+    \large The response vector \textbf{y}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}        
+        \normalsize
+            \[
+            \mathbf{y} = \left( 
+            \begin{array}{c} 
+            \color{darkred}{y_1} \\ 
+            \color{darkred}{y_2} \\ 
+            \color{orange}{y_3} \\ 
+            \color{orange}{y_4} \\ 
+            \color{violet}{y_5} \\ 
+            \color{violet}{y_6} \\ 
+            \color{darkgray}{y_7} \\ 
+            \color{darkgray}{y_8} 
+            \end{array}\right) = \left( 
+            \begin{array}{c} 
+            \color{darkred}{1.63} \\ 
+            \color{darkred}{8.03} \\ 
+            \color{orange}{2.68} \\ 
+            \color{orange}{0.47} \\ 
+            \color{violet}{3.77} \\ 
+            \color{violet}{3.76} \\ 
+            \color{darkgray}{2.15} \\ 
+            \color{darkgray}{5.61} 
+            \end{array}\right)
+            \]
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_5_theory_of_mems/figures/unnamed-chunk-3-1.png}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    
+    \textbf{4} groups are measured \textbf{2} times each...
 \end{frame}
 
 % Slide 6: Fixed Effects Design Matrix

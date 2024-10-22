@@ -942,10 +942,10 @@ Degrees of freedom: 60 total; 56 residual
 \begin{frame}[fragile]{}
     \textbf{The variance-covariance matrix of the errors}
     \scriptsize
-    \begin{VerbatimIN}
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 getVarCov(model.3)
     \end{VerbatimIN}
-    \begin{VerbatimOUT}
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
 Marginal variance covariance matrix
           [,1]     [,2]      [,3]      [,4]     [,5]
 [1,]  0.347730 0.015590 -0.080207 -0.041345 0.182270
@@ -959,7 +959,7 @@ Marginal variance covariance matrix
      
      \normalsize\textbf{The correlation matrix of the errors}
      \scriptsize
-     \begin{VerbatimIN}
+     \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 cov2cor(getVarCov(model.3))    
      \end{VerbatimIN}
 \end{frame}
@@ -967,10 +967,11 @@ cov2cor(getVarCov(model.3))
 \begin{frame}[fragile]{}
     \textbf{Any differences here?}
     \scriptsize
-    \begin{VerbatimIN}
+    \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 anova(model.1, model.2, model.3)        
     \end{VerbatimIN}
-    \begin{VerbatimOUT}
+    \tiny
+    \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
         Model df      AIC      BIC    logLik   Test   L.Ratio p-value
 model.1     1  5 123.3916 133.5184 -56.69580                         
 model.2     2  6 117.4310 129.5831 -52.71550 1 vs 2  7.960612  0.0048
@@ -982,16 +983,18 @@ model.3     3 15 116.7427 147.1230 -43.37134 2 vs 3 18.688311  0.0280
 \small
     \begin{columns}
     \begin{column}{0.5\textwidth}
-          \begin{verbatim}
-plot(model.3)
-          \end{verbatim}
+    \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+plot(model.3)            
+        \end{VerbatimIN}
     \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-47-1.png}
     \end{column}
     \begin{column}{0.5\textwidth}
-    \begin{verbatim}
+    \scriptsize
+        \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 qqplot(rnorm(60,0,1), 
-as.vector(residuals(model.3)))
-    \end{verbatim}
+as.vector(residuals(model.3)))            
+        \end{VerbatimIN}
     \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-48-1.png}
          
     \end{column}  

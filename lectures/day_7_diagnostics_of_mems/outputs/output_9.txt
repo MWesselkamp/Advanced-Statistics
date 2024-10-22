@@ -1,5 +1,0 @@
-Random effects variance covariance matrix
-            (Intercept)       age
-(Intercept)     3.89140 -0.155210
-age            -0.15521  0.024498
-  Standard Deviations: 1.9727 0.15652 

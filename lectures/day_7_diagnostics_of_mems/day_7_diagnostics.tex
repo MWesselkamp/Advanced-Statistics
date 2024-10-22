@@ -5,7 +5,27 @@
 \usepackage{color}
 \usepackage{subfig}
 \usepackage{hyperref}
-\usepackage{fancyvrb}
+\usepackage{tcolorbox,fancyvrb,xcolor,tikz}
+\tcbuselibrary{skins,breakable}
+
+\newenvironment{VerbatimIN}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    colback=lightgray,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
+
+ \newenvironment{VerbatimOUT}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
 
 
 
@@ -144,12 +164,36 @@
     \frametitle{Nested Design}
     \begin{columns}
         \begin{column}{0.6\textwidth}
-            \tiny\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-m.r <- lmer(Glycogen~Treatment+(1|Rat/Liver), rats)
-            \end{Verbatim}
-            \scalebox{1}{
-                \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_1.txt}
-            }
+        \tiny
+        \begin{VerbatimIN}
+m.r <- lmer(Glycogen~Treatment+(1|Rat/Liver), rats)            
+        \end{VerbatimIN}
+        \begin{VerbatimOUT}
+Linear mixed model fit by REML ['lmerMod']
+Formula: Glycogen ~ Treatment + (1|Rat/Liver)
+   Data: rats
+
+REML criterion at convergence: 227.1
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-1.91171 -0.71277 -0.03182  0.71589  2.52546 
+
+Random effects:
+ Groups    Name        Variance  Std.Dev. 
+ Liver:Rat (Intercept) 1.146e-07 0.0003385
+ Rat       (Intercept) 2.061e+01 4.5395756
+ Residual              4.248e+01 6.5173452
+Number of obs: 36, groups:  Liver:Rat, 6; Rat, 2
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  140.500      3.721  37.762
+Treatment2    10.500      2.661   3.946
+Treatment3    -5.333      2.661  -2.004
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see ?isSingular            
+        \end{VerbatimOUT}
         \end{column}
         \begin{column}{0.4\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-3-1.png}
@@ -161,16 +205,39 @@ m.r <- lmer(Glycogen~Treatment+(1|Rat/Liver), rats)
     \frametitle{Wrongly Crossed Design}
     \begin{columns}
         \begin{column}{0.6\textwidth}
-            \tiny\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-m.r.2 <- lmer(Glycogen~Treatment+(1|Rat)+(1|Liver), rats)
-            \end{Verbatim}
-            \scalebox{1}{
-                \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_2.txt}
-            }
+            \tiny
+            \begin{VerbatimIN}
+m.r.2 <- 
+lmer(Glycogen~Treatment + (1|Rat) + (1|Liver), rats)                
+            \end{VerbatimIN}
+            \begin{VerbatimOUT}
+Linear mixed model fit by REML ['lmerMod']
+Formula: Glycogen ~ Treatment + (1|Rat) + (1|Liver)
+   Data: rats
+
+REML criterion at convergence: 227
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-1.84661 -0.77132  0.02645  0.69139  2.45810 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Liver    (Intercept)  1.271   1.128   
+ Rat      (Intercept) 20.662   4.546   
+ Residual             41.522   6.444   
+Number of obs: 36, groups:  Liver, 3; Rat, 2
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  140.500      3.770  37.265
+Treatment2    10.500      2.631   3.991
+Treatment3    -5.333      2.631  -2.027                
+            \end{VerbatimOUT}
         \end{column}
         \begin{column}{0.4\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-3-1.png}
-            \textbf{different groupings and different variance components}
+            \textbf{Different groupings and different variance components}
         \end{column}
     \end{columns}
 \end{frame}
@@ -188,27 +255,75 @@ m.r.2 <- lmer(Glycogen~Treatment+(1|Rat)+(1|Liver), rats)
     \frametitle{}
     \textbf{A correlation of exactly 1 and a singular fit?}
     \tiny
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \begin{VerbatimIN}
 m.f <- lmer(root ~ week * fertilizer + (week|plant), fertilizer)
-summary(m.f)        
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_3.txt}
-    }
+summary(m.f) 
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+Linear mixed model fit by REML ['lmerMod']
+Formula: root ~ week * fertilizer + (week | plant)
+   Data: fertilizer
+
+REML criterion at convergence: 104.3
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.6916 -0.7407 -0.1264  0.6904  2.2746 
+Random effects:
+ Groups   Name        Variance  Std.Dev. Corr
+ plant    (Intercept) 0.0306727 0.17514      
+          week        0.0007169 0.02677  1.00
+ Residual             0.2171683 0.46601      
+Number of obs: 60, groups:  plant, 12
+Fixed effects:
+                       Estimate Std. Error t value
+(Intercept)            -0.22233    0.21196  -1.049
+week                    0.98333    0.03201  30.724
+fertilizercontrol      -0.75767    0.29975  -2.528
+week:fertilizercontrol -0.09167    0.04526  -2.025
+Correlation of Fixed Effects:
+            (Intr) week   frtlzr
+week        -0.685              
+frtlzrcntrl -0.707  0.484       
+wk:frtlzrcn  0.484 -0.707 -0.685
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see ?isSingular        
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{}
     \tiny
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \begin{VerbatimIN}
 m.f.no <- lmer(root ~ week * fertilizer + (week||plant), fertilizer)
-summary(m.f.no) 
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_4.txt}
-    }
-    \vspace{}
-    
+summary(m.f.no)         
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+Linear mixed model fit by REML ['lmerMod']
+Formula: root ~ week * fertilizer + ((1 | plant) + (0 + week | plant))
+   Data: fertilizer
+
+REML criterion at convergence: 105
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.6953 -0.6984 -0.1626  0.6948  2.2986 
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ plant    (Intercept) 0.054570 0.23360 
+ plant.1  week        0.001283 0.03582 
+ Residual             0.218527 0.46747 
+Number of obs: 60, groups:  plant, 12
+Fixed effects:
+                       Estimate Std. Error t value
+(Intercept)            -0.22233    0.22172  -1.003
+week                    0.98333    0.03353  29.325
+fertilizercontrol      -0.75767    0.31355  -2.416
+week:fertilizercontrol -0.09167    0.04742  -1.933
+Correlation of Fixed Effects:
+            (Intr) week   frtlzr
+week        -0.735              
+frtlzrcntrl -0.707  0.520       
+wk:frtlzrcn  0.520 -0.707 -0.735
+    \end{VerbatimOUT}
     \normalsize
     \textbf{Of course that is not “keeping it maximal”, but as maximal as possible}
 \end{frame}
@@ -224,16 +339,17 @@ summary(m.f.no)
 \begin{frame}[fragile]
     \frametitle{}
     \textbf{We use the model without correlation}
-    \vspace{0.5cm}
-    
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \begin{VerbatimIN}
 m.f.2 <- lmer(root ~ week * fertilizer + (week||plant), fertilizer)
-VarCorr(m.f.2)         
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_5.txt}
-    }
+VarCorr(m.f.2)            
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+ Groups   Name        Std.Dev.
+ plant    (Intercept) 0.23360 
+ plant.1  week        0.03582 
+ Residual             0.46747         
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -242,23 +358,25 @@ VarCorr(m.f.2)
         \begin{column}{0.45\textwidth}
             \textbf{Plotting}
             \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-hist(ranef(m.f.2)$plant[,1])
-            \end{Verbatim}
+            \begin{VerbatimIN}
+hist(ranef(m.f.2)$plant[,1])                
+            \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-14-1.png}
         \end{column}
         \begin{column}{0.55\textwidth}
             \textbf{Testing}
             \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-shapiro.test(ranef(m.f.2)$plant[,1])
-            \end{Verbatim}
-            \scalebox{1}{
-                \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_6.txt}
-            }
-        \vspace{1.45cm}
-        
-        \normalsize\textbf{
+            \begin{VerbatimIN}
+shapiro.test(ranef(m.f.2)$plant[,1])              
+            \end{VerbatimIN}
+            \begin{VerbatimOUT}
+    Shapiro-Wilk normality test
+
+data:  ranef(m.f.2)$plant[, 1]
+W = 0.98228, p-value = 0.9912
+            \end{VerbatimOUT}
+        \normalsize
+        \textbf{
         The Shapiro-Wilk test tests for a significant difference of the data distribution to normality, i.e. if $\mathit{p}<0.05$, the data are not normal.}
         \end{column}
     \end{columns}
@@ -270,22 +388,23 @@ shapiro.test(ranef(m.f.2)$plant[,1])
         \begin{column}{0.45\textwidth}
             \textbf{Plotting}
             \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-hist(ranef(m.f.2)$plant[,2])
-            \end{Verbatim}
+            \begin{VerbatimIN}
+hist(ranef(m.f.2)$plant[,2])                
+            \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-16-1.png}
         \end{column}
         \begin{column}{0.55\textwidth}
             \textbf{Testing}
             \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-shapiro.test(ranef(m.f.2)$plant[,2])
-            \end{Verbatim}
-            \scalebox{1}{
-                \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_7.txt}
-            }
-            \vspace{3.25cm}
-            
+            \begin{VerbatimIN}
+shapiro.test(ranef(m.f.2)$plant[,2])                
+            \end{VerbatimIN}
+            \begin{VerbatimOUT}
+    Shapiro-Wilk normality test
+
+data:  ranef(m.f.2)$plant[, 2]
+W = 0.95601, p-value = 0.7257                
+            \end{VerbatimOUT}
         \end{column}
     \end{columns}
 \end{frame}
@@ -293,28 +412,26 @@ shapiro.test(ranef(m.f.2)$plant[,2])
 \begin{frame}[fragile]
 \frametitle{Another useful perspective: QQ-Plots}
     \begin{columns}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.55\textwidth}
         \textbf{Intercept ranefs}
         \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+        \begin{VerbatimIN}
 qqmath(ranef(m.f.2)$plant[,1], 
-panel = function(x, ...) {
-          panel.qqmathline(x, ...)
-          panel.qqmath(x, ...)
-       })                
-            \end{Verbatim}
+panel = function(x,...) {
+          panel.qqmathline(x,...)
+          panel.qqmath(x,...)})                    
+        \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-18-1.png}
         \end{column}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.55\textwidth}
         \textbf{Slope ranefs}
         \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+        \begin{VerbatimIN}
 qqmath(ranef(m.f.2)$plant[,2], 
-panel = function(x, ...) {
-          panel.qqmathline(x, ...)
-          panel.qqmath(x, ...)
-       })               
-            \end{Verbatim}
+panel = function(x,...) {
+          panel.qqmathline(x,...)
+          panel.qqmath(x,...)})                  
+        \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-19-1.png}
         \end{column}
     \end{columns}
@@ -331,23 +448,28 @@ panel = function(x, ...) {
 \begin{frame}[fragile]
     \frametitle{Random Effects Model: Genotype Deviations}
     \begin{columns}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.55\textwidth}
         \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+        \begin{VerbatimIN}
 m.g <- lmer(Height ~ poly(P,2) + 
 (poly(P,2)|Genotype), geno)
-xyplot(Height ~ P|Genotype, geno)                
-            \end{Verbatim}
+xyplot(Height ~ P|Genotype,geno)            
+        \end{VerbatimIN}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-21-1.png}
         \end{column}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.55\textwidth}
         \scriptsize
-            \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-VarCorr(m.g)                
-            \end{Verbatim}
-            \tiny\scalebox{1}{
-                \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_8.txt}
-            }
+        \begin{VerbatimIN}
+VarCorr(m.g)                   
+        \end{VerbatimIN}
+        \tiny
+        \begin{VerbatimOUT}
+ Groups   Name        Std.Dev. Corr         
+ Genotype (Intercept) 11.544                
+          poly(P, 2)1 50.835    0.997       
+          poly(P, 2)2 26.338   -0.989 -0.974
+ Residual              2.455      
+        \end{VerbatimOUT}
         \vspace{0.1cm}
 
         \scriptsize
@@ -362,9 +484,10 @@ VarCorr(m.g)
 
 \begin{frame}[fragile]
     \frametitle{Distribution of Random Effects}
-    \small\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-hist(ranef(m.g)$Genotype[,1])        
-    \end{Verbatim}
+    \scriptsize
+    \begin{VerbatimIN}
+hist(ranef(m.g)$Genotype[,1])           
+    \end{VerbatimIN}
     \begin{center}
     \includegraphics[width=0.65\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-23-1.png}        
     \end{center}
@@ -381,10 +504,11 @@ hist(ranef(m.g)$Genotype[,1])
 \begin{frame}[fragile]
     \frametitle{Plotting Residuals: Orthodont Data}
     \textbf{Use the in-built plot function for residual plots}
-    \scriptsize\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \scriptsize
+    \begin{VerbatimIN}
 fm1 <- lmer(distance ~ age * Sex + (age|Subject))
-plot(fm1)        
-    \end{Verbatim}
+plot(fm1)          
+    \end{VerbatimIN}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-25-1.png}
@@ -399,10 +523,11 @@ plot(fm1)
 
 \begin{frame}[fragile]
     \frametitle{QQ Plot of Residuals}
-    \scriptsize\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \scriptsize
+    \begin{VerbatimIN}
 require("lattice")
 qqmath(fm1, id=0.05) # set significance level for outlier test        
-    \end{Verbatim}
+    \end{VerbatimIN}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-26-1.png}  
@@ -431,10 +556,11 @@ qqmath(fm1, id=0.05) # set significance level for outlier test
 
 \begin{frame}[fragile]
     \frametitle{Standardized Residuals vs Age}
-    \scriptsize\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \scriptsize
+    \begin{VerbatimIN}
 fm1 <- lmer(distance ~ age * Sex + (age|Subject))
-plot(fm1, resid(., scaled=TRUE) ~ age, abline = 0)
-    \end{Verbatim}
+plot(fm1, resid(., scaled=TRUE) ~ age, abline = 0)        
+    \end{VerbatimIN}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-27-1.png}
@@ -448,9 +574,10 @@ plot(fm1, resid(., scaled=TRUE) ~ age, abline = 0)
 
 \begin{frame}[fragile]
     \frametitle{Response Residuals vs Fitted Values by Age}
-    \scriptsize\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-plot(fm1, resid(.) ~ fitted(.) | Sex, abline = 0)
-    \end{Verbatim}
+    \scriptsize
+    \begin{VerbatimIN}
+plot(fm1, resid(.) ~ fitted(.) | Sex, abline = 0)        
+    \end{VerbatimIN}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-29-1.png}
@@ -469,64 +596,106 @@ plot(fm1, resid(.) ~ fitted(.) | Sex, abline = 0)
     \vspace{0.5cm}
 
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \begin{VerbatimIN}
 mod <- lme(distance ~ age * Sex, random = ~ age|Subject, 
            weights = varIdent(form = ~1|Sex))
 getVarCov(mod, type = "random.effects")
-    \end{Verbatim}
-    \vspace{0.5cm}
-    
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_9.txt}
-    }
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+Random effects variance covariance matrix
+            (Intercept)       age
+(Intercept)     3.89140 -0.155210
+age            -0.15521  0.024498
+  Standard Deviations: 1.9727 0.15652         
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Extracting Conditional Variance-Covariance Matrix}
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-getVarCov(mod, individuals = 1, type = "conditional")        
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_10_1.txt}
-    }
-
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-getVarCov(mod, individuals = 27, type = "conditional")      
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_10_2.txt}
-    }
+    \begin{VerbatimIN}
+getVarCov(mod, individuals = 1, type = "conditional")            
+    \end{VerbatimIN}
+    \tiny
+    \begin{VerbatimOUT}
+Subject M01 
+Conditional variance covariance matrix
+       1      2      3      4
+1 2.6555 0.0000 0.0000 0.0000
+2 0.0000 2.6555 0.0000 0.0000
+3 0.0000 0.0000 2.6555 0.0000
+4 0.0000 0.0000 0.0000 2.6555
+  Standard Deviations: 1.6296 1.6296 1.6296 1.6296         
+    \end{VerbatimOUT}
+    \scriptsize
+    \begin{VerbatimIN}
+getVarCov(mod, individuals = 27, type = "conditional") 
+    \end{VerbatimIN}
+    \tiny
+    \begin{VerbatimOUT}
+Subject F11 
+Conditional variance covariance matrix
+        1       2       3       4
+1 0.44389 0.00000 0.00000 0.00000
+2 0.00000 0.44389 0.00000 0.00000
+3 0.00000 0.00000 0.44389 0.00000
+4 0.00000 0.00000 0.00000 0.44389
+  Standard Deviations: 0.66625 0.66625 0.66625 0.66625         
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{}
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-mod
-    \end{Verbatim}
-    \tiny\scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_11.txt}
-    }
+    \begin{VerbatimIN}
+mod        
+    \end{VerbatimIN}
+    \tiny
+    \begin{VerbatimOUT}
+Linear mixed-effects model fit by REML
+  Data: NULL 
+  Log-restricted-likelihood: -205.7612
+  Fixed: distance ~ age * Sex 
+  (Intercept)           age     SexFemale age:SexFemale 
+   16.3406250     0.7843750     1.0321023    -0.3048295 
+Random effects:
+ Formula: ~age | Subject
+ Structure: General positive-definite, 
+            Log-Cholesky parametrization
+            StdDev    Corr  
+(Intercept) 1.9726633 (Intr)
+age         0.1565175 -0.503
+Residual    1.6295843       
+Variance function:
+ Structure: Different standard deviations per stratum
+ Formula: ~1 | Sex 
+ Parameter estimates:
+     Male    Female 
+1.0000000 0.4088466 
+Number of Observations: 108
+Number of Groups: 27 
+    \end{VerbatimOUT}
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-mod$sigma^2*0.4088466^2
----
+    \begin{VerbatimIN}
+mod$sigma^2*0.4088466^2        
+    \end{VerbatimIN}
+    \tiny
+    \begin{VerbatimOUT}
 [1] 0.443889
-    \end{Verbatim}
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Modeling among-group variances}
     We could also try to model different \textbf{among-group} variances for boys and girls (working with the G-side matrix).
-    \vspace{0.5cm}
+    \vspace{0.3cm}
 
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \begin{VerbatimIN}
 model <- lme(distance ~ age * Sex,
 random = list(Subject = pdDiag(form = ~ Sex),
-              Subject = pdSymm(form = ~ age)))
-    \end{Verbatim}
+              Subject = pdSymm(form = ~ age)))        
+    \end{VerbatimIN}
     \vspace{0.5cm}
 
     \normalsize
@@ -537,18 +706,29 @@ random = list(Subject = pdDiag(form = ~ Sex),
 \begin{frame}[fragile]
     \frametitle{Extracting among-group variances}
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \begin{VerbatimIN}
 VarCorr(mod)
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_12_1.txt}
-    }
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-VarCorr(model)
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_12_2.txt}
-    }
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+Subject = pdLogChol(age) 
+            Variance   StdDev    Corr  
+(Intercept) 3.89140059 1.9726633 (Intr)
+age         0.02449773 0.1565175 -0.503
+Residual    2.65554484 1.6295843     
+    \end{VerbatimOUT}
+    \begin{VerbatimIN}
+VarCorr(model)        
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
+            Variance    StdDev    Corr  
+Subject =   pdDiag(Sex)                 
+(Intercept) 1.60666457  1.2675427       
+SexFemale   0.89043771  0.9436301       
+Subject =   pdSymm(age)                 
+(Intercept) 4.09538269  2.0237052 (Intr)
+age         0.03252448  0.1803454 -0.829
+Residual    1.71620369  1.3100396              
+    \end{VerbatimOUT}
 \end{frame}
 
 
@@ -563,9 +743,10 @@ VarCorr(model)
 
 \begin{frame}[fragile]
     \frametitle{Standardized residuals by Subject}
-    \scriptsize\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-plot(fm1, Subject ~ resid(.))
-    \end{Verbatim}
+    \scriptsize
+    \begin{VerbatimIN}
+plot(fm1, Subject ~ resid(.))        
+    \end{VerbatimIN}
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-36-1.png}
@@ -579,9 +760,10 @@ plot(fm1, Subject ~ resid(.))
 
 \begin{frame}[fragile]
     \frametitle{Observed versus fitted values by Subject}
-    \scriptsize\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-plot(fm1, distance ~ fitted(.) | Subject, abline = c(0,1))
-    \end{Verbatim}
+    \scriptsize
+    \begin{VerbatimIN}
+plot(fm1, distance ~ fitted(.) | Subject, abline = c(0,1))        
+    \end{VerbatimIN}
     \begin{columns}
         \begin{column}{0.6\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-37-1.png}
@@ -595,9 +777,10 @@ plot(fm1, distance ~ fitted(.) | Subject, abline = c(0,1))
 
 \begin{frame}[fragile]
     \frametitle{Standardized residuals along age, separated by Subject}
-    \scriptsize\begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-plot(fm1, resid(.) ~ age | Subject, abline = 0)
-    \end{Verbatim}
+    \scriptsize
+    \begin{VerbatimIN}
+plot(fm1, resid(.) ~ age | Subject, abline = 0)        
+    \end{VerbatimIN}
     \begin{columns}
         \begin{column}{0.6\textwidth}
             \includegraphics[width=\textwidth]{lectures/day_7_diagnostics_of_mems/figures/unnamed-chunk-38-1.png}
@@ -625,29 +808,42 @@ plot(fm1, resid(.) ~ age | Subject, abline = 0)
 \begin{frame}[fragile]
     \frametitle{1. Check for Singularity: True}
     \scriptsize
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-VarCorr(m.f)
-    \end{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_13_1.txt}
-    }
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-isSingular(m.f)
----
-[1] TRUE
-    \end{Verbatim}
-
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
-VarCorr(m.f.2)
-    \end{Verbatim}
-    \scalebox{1}{
-        \lstinputlisting[frame=single]{lectures/day_7_diagnostics_of_mems/outputs/output_13_2.txt}
-    }
-    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+    \begin{VerbatimIN}
+VarCorr(m.f)        
+    \end{VerbatimIN}
+    \tiny
+    \begin{VerbatimOUT}
+ Groups   Name        Std.Dev. Corr 
+ plant    (Intercept) 0.175136      
+          week        0.026774 1.000
+ Residual             0.466013            
+    \end{VerbatimOUT}
+    \scriptsize
+    \begin{VerbatimIN}
+isSingular(m.f)        
+    \end{VerbatimIN}
+        \tiny
+    \begin{VerbatimOUT}
+[1] TRUE        
+    \end{VerbatimOUT}
+    \scriptsize
+    \begin{VerbatimIN}
+VarCorr(m.f.2)        
+    \end{VerbatimIN}
+        \tiny
+    \begin{VerbatimOUT}
+ Groups   Name        Std.Dev.
+ plant    (Intercept) 0.23360 
+ plant.1  week        0.03582 
+ Residual             0.46747         
+    \end{VerbatimOUT}
+    \scriptsize
+    \begin{VerbatimIN}
 isSingular(m.f.2)
----
+    \end{VerbatimIN}
+    \begin{VerbatimOUT}
 [1] FALSE
-    \end{Verbatim}
+    \end{VerbatimOUT}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -715,30 +911,73 @@ nloptwrap.NLOPT_LN_BOBYQA : [OK]
     \end{Verbatim}
 \end{frame}
 
-\begin{frame}
-    \frametitle{Residual Simulations}
-    - Simulate responses under the postulated model.
-    - Repeat the process many times.
-    - Create a distribution of simulated residuals and compare to observed residuals.
+\begin{frame}[fragile]
+    \frametitle{Fixed effects are very similar across optimizers}
+    \scriptsize
+    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+ss <- summary(modelfit.all)
+ss$fixef 
+    \end{Verbatim}
+    \begin{Verbatim}[numbers=left,numbersep=6pt,frame=single]
+                              (Intercept)      week fertilizercontrol
+bobyqa                         -0.2223333 0.9833333        -0.7576667
+Nelder_Mead                    -0.2223333 0.9833333        -0.7576667
+nlminbwrap                     -0.2223333 0.9833333        -0.7576667
+nmkbw                          -0.2223333 0.9833333        -0.7576667
+optimx.L-BFGS-B                -0.2223333 0.9833333        -0.7576667
+nloptwrap.NLOPT_LN_NELDERMEAD  -0.2223333 0.9833333        -0.7576667
+nloptwrap.NLOPT_LN_BOBYQA      -0.2223333 0.9833333        -0.7576667
+                              week:fertilizercontrol
+bobyqa                                   -0.09166667
+Nelder_Mead                              -0.09166667
+nlminbwrap                               -0.09166667
+nmkbw                                    -0.09166667
+optimx.L-BFGS-B                          -0.09166667
+nloptwrap.NLOPT_LN_NELDERMEAD            -0.09166667
+nloptwrap.NLOPT_LN_BOBYQA                -0.09166667
+    \end{Verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Residual checks using Simulations}
+    \begin{itemize}
+        \item[Step 1:] Simulate responses under the postulated model you want to test
+        \item[Step 2:] Do that many, many times
+        \item[Step 3:] Create a distribution of these simulated residuals
+        \item[Step 4:] Compare new residuals against observed residuals to check whether they are atypical
+    \end{itemize}
+    \vspace{0.3cm}
+
+    \textit{If the model is correctly specified, simulated and observed values should be similar}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Residual Simulations with DHARMa}
-    \lstset{style=Rstyle}
-    \begin{lstlisting}
-    library(DHARMa)
-    \end{lstlisting}
+    Residual simulations are implemented in the package DHARMa by Florian Hartig
+    \begin{Verbatim}
+library(DHARMa)        
+    \end{Verbatim}
+    \vspace{0.3cm}
+    
     \begin{itemize}
-        \item DHARMa package documentation: \href{https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html}{here}.
+        \item The DHARMa package documentation can be found in the vignette to the package: \href{https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html}{here}.
     \end{itemize}
+    \vspace{0.3cm}
+    
+    More on DHARMa later this week, as it is not necessary for Linear Mixed Effects Models, but helpful for GLMMs
 \end{frame}
 
 \begin{frame}
-    \frametitle{Recap of Day 8}
+    \frametitle{Recap of Day 7}
+    \textbf{After today you should know and understand}
     \begin{itemize}
-        \item Diagnose Linear Mixed Effects Models by checking variance components, random effects, and residuals.
-        \item Plot residuals for unique random effects levels and consider complex R-side and G-side matrices.
+        \item How a \textbf{Linear Mixed Effects Model} can be diagnosed by checking the \textbf{variance components} (no variance should be exactly zero, no correlation should be exactly -1 or 1)
+        \item Checking the normal distribution of the \textbf{Random Effects}
+        \item Plotting \textbf{residuals}, also for the unique RE levels (subsetting)
+        \item Possible solutions: more complex R-side and G-side matrices (NOT expected for this course !)
     \end{itemize}
+    \vspace{0.3cm}
+    \textbf{Todays exercises on diagnosing LMEMs}
 \end{frame}
 
 \end{document}
