@@ -385,12 +385,15 @@ Estimating the variance of a sample of size $n$:
     \begin{equation*}
         \hat{\sigma}^2 = \frac{(\mathbf{y} - \mathbf{X} \mathbf{\hat{\beta}})' (\mathbf{y} - \mathbf{X} \mathbf{\hat{\beta}})}{n-p-1} = \frac{(\mathbf{y} - \hat{\mathbf{y}})' (\mathbf{y} - \hat{\mathbf{y}})}{n-p-1}
     \end{equation*}
-\end{frame}
 
+    
 Where $n$ is the sample size and $p$ the residual degrees of freedom, i.e. number of parameters (predictors) minus 1.
 
+\end{frame}
+
+
 \begin{frame}[fragile]
-\frametitle{In R}
+\frametitle{OLS by foot in R}
 \scriptsize
     \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 design.matrix <- 
@@ -409,7 +412,7 @@ design.matrix
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{In R}
+\frametitle{OLS by foot in R}
 \scriptsize
     \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 beta.vector <- solve(t(design.matrix) %*% design.matrix) 

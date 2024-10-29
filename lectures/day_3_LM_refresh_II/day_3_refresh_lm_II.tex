@@ -34,8 +34,9 @@
 % \renewcommand{\familydefault}{\sfdefault}
 % \setbeamertemplate{navigation symbols}{}
 
-\title{Mixed Effects Models - Day 3}
-\subtitle{Refreshing Linear Models II}
+\title{Refreshing Linear Models II}
+\subtitle{Mixed Effects Models - Week 3}
+
 \author{Marieke Wesselkamp \\ Department of Biometry and Environmental Systems Analysis \\ Albert-Ludwigs-University of Freiburg (Germany)}
 \date{February 2023}
 
@@ -181,7 +182,7 @@ x -0.94
   \textbf{What if there are only two values of a predictor with several measurements of the response at these values?*}
 
   \begin{itemize}
-    \item \textbf{Note:} This is \textit{NOT} grouping as long as the measurements taken at the same predictor value are from \textit{different} units.
+    \item \textbf{Note:} This is \textit{NOT} grouping as long as the measurements taken at the same predictor value are from \textit{different} individuals.
   \end{itemize}
   
   \begin{figure}[h]
@@ -193,7 +194,7 @@ x -0.94
 
 \begin{frame}
   \frametitle{}
-  \textbf{The question is now usually not how the response increases with the predictor, but what the \textit{difference} in the response between the low and high values of the predictor is.}
+  The question is now usually not how the response increases with the predictor, but what the \textbf{difference} in the response between the low and high values of the predictor is.
   
   \begin{figure}[h]
     \centering
@@ -231,7 +232,9 @@ x -0.94
   \end{equation*}
   
   What happens when $x$ is 0?
-  
+    \pause
+
+    
   \begin{equation*}
   y = \beta_0 + \beta_1 \cdot 0 + \epsilon = \beta_0 + \epsilon
   \end{equation*}
@@ -279,7 +282,11 @@ x -0.94
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Analysis of variance with a binary predictor}
+  \frametitle{Analysis of variance with one binary predictor}
+
+  
+  \textbf{aov()} focuses on hypothesis tests, less on parameter estimation.
+  
   \scriptsize
   \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 model.aov <- aov(y ~ x, ex)
@@ -294,10 +301,32 @@ Residuals   38  124.2    3.27
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
  \end{VerbatimOUT}
-
-
   
 \end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Analysis of variance with one categorical predictor}
+
+  
+  We use $k-1$ degrees of freedom, where $k$ are categories.
+  
+  \scriptsize
+  \begin{VerbatimIN}[numbers=left,numbersep=6pt]
+model.aov <- aov(weight ~ breed, dogs)
+  \end{VerbatimIN}
+ \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
+summary(model.aov)
+
+
+            Df Sum Sq Mean Sq F value   Pr(>F)    
+breed        3   2171   723.8   22.58 2.13e-08 ***
+Residuals   36   1154    32.1                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+ \end{VerbatimOUT}
+  
+\end{frame}
+
 
 \begin{frame}
   \frametitle{ANOVA Table}
@@ -319,7 +348,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 \begin{frame}[fragile]
   \frametitle{}
-  \textbf{aov()} focuses on hypothesis tests, less on parameter estimation.
+  
   \scriptsize
   \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 coef(model.aov) # to get the parameter values
@@ -518,7 +547,7 @@ Age             0.54       0.01
   \frametitle{}
     \begin{columns}
       \begin{column}{0.5\textwidth}
-        Smoking and Age are correlated = confounded.\\
+        Smoking and Age are correlated \textbf{and} Lung capacity and Age are correlated = confounded.\\
         \textit{Children (hopefully) don't smoke but have small lungs.}
         \vspace{0.5cm}
 
@@ -538,7 +567,7 @@ biserial(lung$Age, lung$Smoke)
   \end{columns} 
   \vspace{1cm}
   
-  \tiny{* biserial correlations are between a continuous and a categorical random variable}
+  \tiny{* biserial correlations are between a continuous and a binary random variable}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -572,17 +601,17 @@ Smokeyes       -0.65       0.19
         \begin{column}{0.5\textwidth}
           A 15-year-old \textbf{smoker} has an expected lung capacity of:
           \begin{equation*}
-          1.09 + 0.56 \cdot 15 - 1 \cdot 0.65 = 8.84 \text{ liters}
+          1.09 + 0.56 \cdot 15 - \mathbf{1} \cdot 0.65 = 8.84 \text{ liters}
           \end{equation*}
           \vspace{0.3cm}
           
           A 15-year-old \textbf{non-smoker} has an expected lung capacity of:
           \begin{equation*}
-          1.09 + 0.56 \cdot 15 - 0 \cdot 0.65 = 9.49 \text{ liters}
+          1.09 + 0.56 \cdot 15 - \mathbf{0} \cdot 0.65 = 9.49 \text{ liters}
           \end{equation*}
         \end{column}
         \begin{column}{0.5\textwidth}
-            \includegraphics[width=\textwidth]{lectures/day_3_LM_refresh_II/figures/unnamed-chunk-28-1.png}
+            \includegraphics[width=\textwidth]{lectures/day_3_LM_refresh_II/figures/unnamed-chunk-29-1.png}
             \scriptsize
             \begin{VerbatimOUT}[numbers=left,numbersep=6pt]
             Estimate Std. Error
@@ -601,6 +630,9 @@ Smokeyes       -0.65       0.19
     \item Statistical control for confounds
     \item Interaction
   \end{itemize}
+
+Not exclusive.
+
 \end{frame}
 
 \begin{frame}
@@ -625,6 +657,29 @@ Smokeyes       -0.65       0.19
 \end{frame}
 
 \begin{frame}
+  \frametitle{Omitted Variable Bias: Intuition}
+
+Let's assume the true regression model is
+\begin{equation}
+    y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon,
+\end{equation}
+but we estimate
+\begin{equation} \label{eq:omitted_lm}
+    y = \beta_0 + \beta_1 x_1 + \epsilon.
+\end{equation}
+However, the true relationship between $x_2$ and $y$ is
+\begin{equation*}
+    x_2 = \alpha_0 + \alpha_1 y + \gamma,
+\end{equation*}
+so what we actually estimate with equation \ref{eq:omitted_lm} is:\footnote{see Wikipedia or https://doi.org/10.1080/07388940500339183}
+\begin{equation*}
+    y = (\beta_0 + \beta_2 \alpha_0) + (\beta_1 + \beta_2 \alpha_1) x_1 + (\epsilon + \gamma \beta_2).
+\end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
   \frametitle{}
 \begin{tabular}{cl}
    \begin{tabular}{c}
@@ -640,8 +695,8 @@ Smokeyes       -0.65       0.19
 \end{frame}
 
 \begin{frame}
-    \frametitle{}
-    \textbf{BUT}, imagine $x_1$ fully correlates with $x_2$ so that e.g.: $x_2 = 2 * x_1$ Then:
+      \frametitle{Variance Inflation}
+    Now imagine $x_1$ fully correlates with $x_2$ so that e.g.: $x_2 = 2 * x_1$ Then:
     \begin{equation*}
         \begin{aligned}
         y = 5 + 2 * x_1 + 1 * x_2 \\
@@ -652,30 +707,11 @@ Smokeyes       -0.65       0.19
     \end{equation*}
     \vspace{0.5cm}
     
-    The Log-Likelihood can be equally high for different combinations of the coefficients for $x_2$ and $x_2$\\
-    \textbf{= bad estimates and high standard errors}
-\end{frame}
-
-\begin{frame}
-  \frametitle{}
-  \textbf{Correlated predictors make it difficult to estimate coefficients because of \textit{variance inflation}.}
-  \\
-  Remember the variance estimation for the linear coefficient:
-  \begin{equation*}
-      cov(\hat{\beta}_j) = \sigma(\textbf{X'X})^{-1}
-  \end{equation*}
-
-  This can be reformulated to:
-  
-  \begin{equation*}
-    Var(\hat{\beta}_j) = \frac{1}{(1-R^2)} \cdot \frac{\sigma^2}{\sum_{i=1}^{n} (x_{ij} - \overline{x}_j)^2}
-  \end{equation*}
-  
-  A small model variance $\sigma^2$ and a small $R^2$ lead to small variances of $\hat{\beta}$.
+    The Log-Likelihood can be equally high for different combinations of the coefficients for $x_2$ and $x_2$.
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{In R}
+    \frametitle{Variance Inflation: Bad estimates and high standard errors}
     \scriptsize
     \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 set.seed(123)
@@ -702,6 +738,16 @@ x2     1.03       0.41
 \end{frame}
 
 \begin{frame}
+  \frametitle{Variance Inflation}
+  \textbf{Correlated predictors make it difficult to estimate coefficients.} The variance inflation factor for the variable $x_j$ can be expressed as:
+  \begin{equation*}
+    VIF(x_j) = \frac{1}{(1-R_j^2)}
+  \end{equation*}
+  where $R_j^2$ is the coefficient of determination of $x_j$, dependent on all other predictors $x_i$. When $R_j^2$ is close to one, there's a problem with multicollinearity.
+\end{frame}
+
+
+\begin{frame}
     \frametitle{We have a dilemma...}
     \large{Too few correlated predictors distort results \textbf{(the omitted variable bias)}, but too many correlated predictors can, too \textbf{(variance inflation)}.}
 \end{frame}
@@ -726,23 +772,16 @@ x2     1.03       0.41
   
   \begin{itemize}
     \item A model overfits the data when it re-draws the specifics of the dataset but doesn't deliver general/transferable insights.
+    \item With increasing degrees of freedom, we increasingly fit the noise in the data.
   \end{itemize}
-  
-  \begin{center}
-    \includegraphics[width=0.6\textwidth]{lectures/day_3_LM_refresh_II/figures/unnamed-chunk-35-1.png} 
-  \end{center}
-\end{frame}
-
-\begin{frame}
-    \frametitle{}   
-    \textbf{With increasing degrees of freedom, we increasingly fit the noise in the data.}\\
-    \vspace{0.5cm}
+  \vspace{0.5cm}
         
     \centering\includegraphics[width=1\textwidth]{lectures/day_3_LM_refresh_II/figures/overfitting.png}
     \vspace{0.5cm}
 
     \textit{Rule of thumb: 10 data points per model coefficient}
 \end{frame}
+
 
 \begin{frame}{}
   \begin{center}
@@ -845,17 +884,17 @@ F-statistic: 152.1 on 3 and 36 DF,  p-value: < 2.2e-16
     \includegraphics[width=1\textwidth]{lectures/day_3_LM_refresh_II/figures/more_interactions.png}
 \end{frame}
 
-\begin{frame}
-    \frametitle{These are not interactions:}
-    \begin{columns}
-        \begin{column}{0.4\textwidth}
-            \includegraphics[width=\textwidth]{lectures/day_3_LM_refresh_II/figures/no-inter-1.png}
-        \end{column}
-        \begin{column}{0.45\textwidth}
-            \includegraphics[width=\textwidth]{lectures/day_3_LM_refresh_II/figures/no-inter-2.png}
-        \end{column}
-    \end{columns}
-\end{frame}
+%\begin{frame}
+%    \frametitle{These are not interactions:}
+%    \begin{columns}
+%        \begin{column}{0.4\textwidth}
+%            \includegraphics[width=\textwidth]{lectures/day_3_LM_refresh_II/figures/no-inter-1.png}
+%        \end{column}
+%        \begin{column}{0.45\textwidth}
+%            \includegraphics[width=\textwidth]{lectures/day_3_LM_refresh_II/figures/no-inter-2.png}
+%        \end{column}
+%    \end{columns}
+%\end{frame}
 
 \begin{frame}
     \frametitle{}
@@ -863,17 +902,18 @@ F-statistic: 152.1 on 3 and 36 DF,  p-value: < 2.2e-16
 \end{frame}
 
 \begin{frame}
-  \frametitle{Recapitulation Day 3}
+  \frametitle{Recapitulation Week 3}
+  
   After today, you should know and understand:
   \begin{itemize}
     \item What the difference between \textbf{continuous} and \textbf{categorical} predictors is.
     \item How \textbf{multiple} predictors can be included in a statistical model.
     \item What an \textbf{interaction} between predictors is.
-    \item What R functions to use.
+    \item What Omitted Variable Bias and Variance Inflation are.
   \end{itemize}
   
   \vspace{1cm}
-  Today afternoon: practical exercises about \textbf{categorical} and \textbf{multiple predictors} and \textbf{interactions} in R.
+  Today after lecture: practical exercises about \textbf{categorical} and \textbf{multiple predictors} and \textbf{interactions} in R.
 \end{frame}
 
 \end{document}
