@@ -27,10 +27,11 @@
  {\end{Verbatim}\end{tcolorbox}}
 
 
-\title{Mixed Effects Models - Day 4}
-\subtitle{Generalised Least Squares - GLS}
+
+\title{Generalised Least Squares - GLS}
+\subtitle{Mixed Effects Models - Week 4}
 \author{Marieke Wesselkamp\\Department of Biometry and Environmental Systems Analysis\\Albert-Ludwigs-University of Freiburg (Germany)}
-\date{February 2023}
+\date{November 2024}
 
 \begin{document}
 
@@ -635,7 +636,7 @@ acf(residuals(bf))
         \begin{VerbatimIN}[numbers=left,numbersep=6pt]
 pacf(residuals(bf))
         \end{VerbatimIN}
-        \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-22-1.png}  
+        \includegraphics[width=\textwidth]{lectures/day_4_GLS/figures/unnamed-chunk-23-1.png}  
       \end{column}
   \end{columns}
   \footnotesize More on the difference between acf and pacf: \color{blue}\href{https://stats.stackexchange.com/questions/483383/difference-between-autocorrelation-and-partial-autocorrelation}{here}
@@ -1001,7 +1002,7 @@ as.vector(residuals(model.3)))
     \end{columns}
 \end{frame}
 
-\begin{frame}{Recapitulation Day 4}
+\begin{frame}{Recapitulation Week 4}
   After today you should know and understand:
   \begin{itemize}
     \item How a \textbf{the residual variance-covariance matrix} encodes the assumption of correlation between data points within a group.
@@ -1009,7 +1010,7 @@ as.vector(residuals(model.3)))
     \item The \textbf{assumption} of linear models that is relaxed in GLS.
     \item The difference between \textbf{general}, \textbf{compound symmetric}, and various forms of \textbf{temporal autocorrelation} correlation matrices (AR1, ARMA(p, q)).
   \end{itemize}
-  \textbf{Exercises today}: Exercises on GLS. Prepare for tomorrow. Read and discuss paper on Ilias.
+  \textbf{Exercises after the lecture}: Exercises on GLS. Prepararation for the theory of random effect models: Read and discuss paper.
 \end{frame}
 
 \end{document}

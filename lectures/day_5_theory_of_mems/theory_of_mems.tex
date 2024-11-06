@@ -54,8 +54,9 @@ where:
 \begin{itemize}
   \item $\mathbf{y}$: measured response values
   \item $\mathbf{X}$: design matrix
-  \item $\mathbf{b}$: parameter vector
+  \item $\mathbf{b}$: parameter vector of the design matrix
   \item $\mathbf{e}$: error vector with $mean = 0$, $variance = \sigma^2_{\epsilon} \cdot \mathbf{I}$
+  \item $\mathbf{\sigma^2_{\epsilon} \cdot \mathbf{I}}$: error or residual variance-covariance matrix
 \end{itemize}
 \vspace{0.5cm}
 
@@ -77,30 +78,6 @@ where:
   \item $\mathbf{Z}$: Random Effects design matrix
   \item $\mathbf{u}$: Random Effects parameter vector
 \end{itemize}
-\end{frame}
-
-% Slide 4: R Code for Example
-\begin{frame}[fragile]{Example in R}
-\begin{lstlisting}[language=R]
-library(lme4)
-library(lattice)
-library(nlme)
-
-set.seed(2)
-n.group <- 4
-n.measure <- 2
-
-group.ID <- factor(rep(1:n.group, each = n.measure))
-predictor <- rep(c(0, 2), times = n.measure * 2) + runif(n.group * n.measure, 0, 3)
-
-response <- 
-  1 + rep(rnorm(n.group, mean = 0, sd = 1), each = n.measure) + 
-  rep(rep(rnorm(n.group, mean = 0, sd = 1), each = 2) * predictor) + 
-  rnorm(n.group * n.measure, mean = 0, sd = 1)
-
-rand.Slope.unique <- data.frame(group.ID, predictor, response)
-rand.Slope.unique[4, 3] <- rand.Slope.unique[4, 3] + 2
-\end{lstlisting}
 \end{frame}
 
 % Slide 5: Matrix Representation of Response
@@ -140,12 +117,16 @@ rand.Slope.unique[4, 3] <- rand.Slope.unique[4, 3] + 2
     \end{columns}
     \vspace{0.3cm}
     
-    \textbf{4} groups are measured \textbf{2} times each...
+    \large\textbf{4} groups are measured \textbf{2} times each...
 \end{frame}
 
 % Slide 6: Fixed Effects Design Matrix
-\begin{frame}{Fixed Effects Design Matrix}
-\[
+\begin{frame}
+\frametitle{Fixed Effects Design Matrix X}
+\large ...at two different values of a continous predictor
+\begin{columns}
+        \begin{column}{0.5\textwidth}
+            \[
 \mathbf{X} = \left( 
 \begin{array}{cc} 
 \color{darkred}{1} & \color{darkred}{0.56} \\ 
@@ -158,10 +139,50 @@ rand.Slope.unique[4, 3] <- rand.Slope.unique[4, 3] + 2
 \color{darkgray}{1} & \color{darkgray}{4.5} 
 \end{array}\right)
 \]
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_5_theory_of_mems/figures/unnamed-chunk-4-1.png}
+        \end{column}
+    \end{columns}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{The Parameter Vector b}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+\[
+\boldsymbol{b} = 
+\begin{pmatrix}
+\beta_0 \\
+\beta_1
+\end{pmatrix} =
+\begin{pmatrix}
+intercept \\
+slope
+\end{pmatrix}
+\]
+\[
+=
+\begin{pmatrix}
+0.98 \\
+0.48
+\end{pmatrix}
+\]
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_5_theory_of_mems/figures/unnamed-chunk-5-1.png}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    
+    \large \textit{The parameter vector b describes the average deterministic part of the model}
 \end{frame}
 
 % Slide 7: Random Effects Design Matrix
-\begin{frame}{Random Effects Design Matrix}
+\begin{frame}{Random Effects Design Matrix Z}
+\begin{columns}
+        \begin{column}{0.5\textwidth}
 \[
 \mathbf{Z} = \left( 
 \begin{array}{cccc} 
@@ -175,10 +196,23 @@ rand.Slope.unique[4, 3] <- rand.Slope.unique[4, 3] + 2
 0 & 0 & 0 & \color{darkgray}{1} 
 \end{array}\right)
 \]
+        \end{column}
+        \begin{column}{0.5\textwidth}
+        \large
+            1) There are only 1s because it is a \textbf{Random Intercept} model \\
+            \vspace{0.3cm}
+            
+            2) It is \textbf{sparse} = complete empty elements because of the grouping
+        \end{column}
+    \end{columns}
+
 \end{frame}
 
 % Slide 8: Random Effects Parameter Vector
-\begin{frame}{Random Effects Parameter Vector}
+\begin{frame}{Random Effects Parameter Vector u}
+\large u values as group-specific \textbf{deviations} from the population average intecept $\beta_0$
+\begin{columns}
+        \begin{column}{0.5\textwidth}
 \[
 \mathbf{u} = \left( 
 \begin{array}{c} 
@@ -194,21 +228,19 @@ rand.Slope.unique[4, 3] <- rand.Slope.unique[4, 3] + 2
 \color{darkgray}{0.09} 
 \end{array}\right)
 \]
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_5_theory_of_mems/figures/unnamed-chunk-6-1.png}
+        \end{column}
+    \end{columns}
+    \vspace{0.2cm}
+\large\textit{The random intercepts shift the group-specific lines up or down}
 \end{frame}
-
-% Slide 9: Plot the Results
-\begin{frame}[fragile]{Plot Results in R}
-\begin{lstlisting}[language=R]
-plot(rand.Slope.unique$predictor, rand.Slope.unique$response, 
-     xlab = "Predictor", ylab = "Response", 
-     pch = 21, bg = "darkgreen", cex = 2)
-\end{lstlisting}
-\end{frame}
-
-% Additional slides for the theory, residuals, variance-covariance matrices, etc., would follow a similar format
 
 % Slide 10: Error Vector
 \begin{frame}{Error Vector $\epsilon$}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
 \[
 \mathbf{e} = \left( 
 \begin{array}{c} 
@@ -232,13 +264,24 @@ plot(rand.Slope.unique$predictor, rand.Slope.unique$response,
 \color{darkgray}{0.30} 
 \end{array}\right)
 \]
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{lectures/day_5_theory_of_mems/figures/unnamed-chunk-7-1.png}
+        \end{column}
+    \end{columns}
+    \vspace{0.3cm}
+    
+\large \textit{Deviations of the measurements from the random effects values u = the deviations from the deviations}
 \end{frame}
 
 % Slide 11: Two Stochastic Parts
 \begin{frame}{Two Stochastic Parts in Mixed Models}
+\Large
 A Mixed Effects Model has two stochastic parts:
+\vspace{0.2cm}
+
 \begin{enumerate}
-  \item $\mathbf{u} \sim \mathcal{N}(0, \mathbf{G})$ describing how the random effects $\mathbf{u}$ vary around $0$ with variance-covariance matrix $\mathbf{G}$.
+  \item $\mathbf{u} \sim \mathcal{N}(0, \mathbf{G})$ describing how the random effects $\mathbf{u}$ vary around $0$ and is given by the random effects variance-covariance matrix $\mathbf{G}$.
   \item $\mathbf{e} \sim \mathcal{N}(0, \mathbf{R})$ describes how the residuals vary after accounting for fixed and random effects.
 \end{enumerate}
 \end{frame}
