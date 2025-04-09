@@ -1,4 +1,0 @@
- Groups   Name        Std.Dev.
- plant    (Intercept) 0.23360 
- plant.1  week        0.03582 
- Residual             0.46747 

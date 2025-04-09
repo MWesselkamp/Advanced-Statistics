@@ -1,0 +1,101 @@
+\documentclass{beamer}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{subfig}
+\usepackage{hyperref}
+\usepackage{tcolorbox,fancyvrb,xcolor,tikz}
+\tcbuselibrary{skins,breakable}
+
+\usepackage{comment}
+% Define a conditional block for skipping
+\excludecomment{skipslide}
+
+\newenvironment{VerbatimIN}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    colback=lightgray,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
+
+ \newenvironment{VerbatimOUT}
+ {\VerbatimEnvironment
+  \begin{tcolorbox}[
+    breakable,
+    spartan
+  ]%
+  \begin{Verbatim}}
+ {\end{Verbatim}\end{tcolorbox}}
+
+% R code formatting
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{Rstyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\title{Mixed Effects Models - Week 14}
+\subtitle{Q \& A}
+\author{Marieke Wesselkamp\\Department of Biometry and Environmental Systems Analysis\\Albert-Ludwigs-University of Freiburg (Germany)}
+\date{January 2025}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+    \frametitle{Individual level intercepts: Why?}
+
+    We can understand the why from a Bayesian Perspective. For example, with a biomial GLM with grand population intercept $\beta_0$.
+    
+    \large
+    \begin{align*}
+        &s_i \sim Binomial(n_i, p_i) \\
+        &logit(p_i) = \beta_0 + \beta_{TANK[i]} \quad \text{for i in 1, ...tanks}\\
+        &\beta_{TANK} \sim Normal(0, 5) \\
+        &\beta_0 \sim Normal(0, 10) \\
+    \end{align*}
+    
+\end{frame}
+
+\begin{frame}
+    \frametitle{Individual level intercepts: Why?}
+
+    Now the GLMM - the hierarchical model. Here, we estimate the variance component of the intercept.
+    
+    \large
+    \begin{align*}
+        &s_i \sim Binomial(n_i, p_i) \\
+        &logit(p_i) = \beta_0 + \beta_{TANK[i]} \quad \text{for i in 1, ...tanks}\\
+        &\beta_{TANK} \sim Normal(\alpha, \sigma) \\
+        &\beta_0 \sim Normal(0, 10) \\
+        &\alpha \sim Normal(0, 1) \\
+        &\sigma \sim HalfCauchy(0, 1) \\
+    \end{align*}
+
+    Here, the Gaussian Prior will shrink the possible estimates! And, we estimate the variance from the individual tanks.
+    
+\end{frame}
+
+
+\end{document}
